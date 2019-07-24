@@ -12,7 +12,7 @@ namespace gs {
 			string key = tempLeft.Substring(varEndPos, tempLeft.Length - varEndPos).Trim();
 			string value = ScriptExpression.Execute(tempRight);
 
-			Debug.Log(key + ":" + value);
+			//Debug.Log(key + ":" + value);
 		}
 	}
 }

@@ -19,10 +19,8 @@ namespace gs {
 			if (temp[temp.Length - 1] != ScriptGrammar.OVER) { return; }
 			temp = temp.Substring(0, temp.Length - 1);
 
-			int overPos = temp.LastIndexOf(ScriptGrammar.OVER);
-			if (overPos == -1) { return; }
 			int signPos = temp.IndexOf('=');
-			if (sign != -1) {
+			if (signPos != -1) {
 				if (signPos + 1 >= temp.Length - 1) { return; }
 				// variable left value
 				string left = temp.Substring(0, signPos);
@@ -36,11 +34,11 @@ namespace gs {
 			_ExecuteCall(temp);
 		}
 
-		private void _ExecuteVariable(string left, string right) {
+		private static void _ExecuteVariable(string left, string right) {
 			ScriptVariable.Execute(left, right);
 		}
 
-		private void _ExecuteCall(string src) {
+		private static void _ExecuteCall(string src) {
 			ScriptCall.Execute(src);
 		}
 	}
