@@ -1,5 +1,8 @@
 .vs
 .vscode
+*.pdb
+*.exe
 
 GameScript/obj
 Test/obj
+Test/bin

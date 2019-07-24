@@ -1,4 +1,4 @@
-namespace gs {
+﻿namespace gs.compiler {
 	public class ScriptGrammar {
 
 		public static readonly char OVER = ';';
