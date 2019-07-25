@@ -1,12 +1,13 @@
-﻿namespace gs.compiler {
+﻿/*
+namespace gs.compiler {
 	public static class ScriptSentence {
 		public static void Execute(string src) {
 
 			var temp = src.Trim();
 			if (string.IsNullOrEmpty(temp)) { return; }
-			int fcbPos = temp.IndexOf(ScriptGrammar.FCB);
+			int fcbPos = temp.IndexOf(Grammar.FCB);
 			if (fcbPos != -1) {
-				int fcePos = temp.LastIndexOf(ScriptGrammar.FCE);
+				int fcePos = temp.LastIndexOf(Grammar.FCE);
 				if (fcePos == -1 || fcbPos >= fcePos) {
 					Logger.Error(src);
 					return;
@@ -15,12 +16,11 @@
 				string head = temp.Substring(0, fcbPos);
 				// function body
 				string body = temp.Substring(fcbPos + 1, fcePos - fcbPos - 1);
-				ScriptFunction.Execute(head, body);
 
 				return;
 			}
 
-			if (temp[temp.Length - 1] != ScriptGrammar.OVER) {
+			if (temp[temp.Length - 1] != Grammar.OVER) {
 				Logger.Error(src);
 				return;
 			}
@@ -45,7 +45,6 @@
 		}
 
 		private static void _ExecuteVariable(string left, string right) {
-			ScriptVariable.Execute(left, right);
 		}
 
 		private static void _ExecuteCall(string src) {
@@ -53,3 +52,4 @@
 		}
 	}
 }
+*/

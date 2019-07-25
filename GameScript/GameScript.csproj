@@ -43,10 +43,11 @@
     <Compile Include="src\Logger.cs" />
     <Compile Include="src\ScriptCall.cs" />
     <Compile Include="src\ScriptExpression.cs" />
-    <Compile Include="src\ScriptFunction.cs" />
-    <Compile Include="src\ScriptGrammarDefine.cs" />
+    <Compile Include="src\Grammar.cs" />
+    <Compile Include="src\ScriptMethod.cs" />
     <Compile Include="src\ScriptSentence.cs" />
-    <Compile Include="src\ScriptVariable.cs" />
+    <Compile Include="src\ScriptObject.cs" />
+    <Compile Include="src\ScriptValue.cs" />
     <Compile Include="src\VM.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
