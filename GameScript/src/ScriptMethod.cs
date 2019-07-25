@@ -32,7 +32,7 @@ namespace gs.compiler {
 				Logger.Error(_srcHeader);
 				return;
 			}
-			if (nameSrc.IndexOfAny(new char[] { ' ', '\n' }) != -1) {
+			if (nameSrc.IndexOfAny(Grammar.SPECIAL_CHAR) != -1) {
 				Logger.Error(_srcHeader);
 				return;
 			}
@@ -51,7 +51,7 @@ namespace gs.compiler {
 					Logger.Error(_srcHeader);
 					return;
 				}
-				if (paramName.IndexOfAny(new char[] { ' ', '\n' }) != -1) {
+				if (paramName.IndexOfAny(Grammar.SPECIAL_CHAR) != -1) {
 					Logger.Error(_srcHeader);
 					return;
 				}
@@ -66,6 +66,14 @@ namespace gs.compiler {
 		public ScriptValue Execute(List<ScriptValue> args) {
 			_objects.Clear();
 
+			for (int i = 0; i < _params.Count; ++i) {
+				string paramName = _params[i];
+				ScriptValue paramValue = null;
+				if (i < args.Count) {
+					paramValue = args[i];
+				}
+				_objects.Add(paramName, new ScriptObject(paramName, paramValue));
+			}
 
 			return null;
 		}

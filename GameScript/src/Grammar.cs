@@ -15,6 +15,15 @@
 		// function param split
 		public static readonly char FPS = ',';
 
+		// string sign
+		public static readonly char SS = '\"';
+
+		// assign sign
+		public static readonly char ASSIGN = '=';
+
+		// var
 		public static readonly string VAR = "var";
+
+		public static readonly char[] SPECIAL_CHAR = new char[] { ' ', '\n' };
 	}
 }

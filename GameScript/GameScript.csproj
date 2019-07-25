@@ -41,8 +41,6 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Logger.cs" />
-    <Compile Include="src\ScriptCall.cs" />
-    <Compile Include="src\ScriptExpression.cs" />
     <Compile Include="src\Grammar.cs" />
     <Compile Include="src\ScriptMethod.cs" />
     <Compile Include="src\ScriptSentence.cs" />
