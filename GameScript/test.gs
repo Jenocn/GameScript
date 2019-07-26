@@ -1,19 +1,19 @@
+// GameScript
+
 main() {
+	var num1 = 0;
+	var num2 = 0;
 
-	var str = "Hello World!";
+	num1 = sum(50, 50);
+	num2 = sum(100, 100);
 
-	func1() {
-		print(str);
+	if (num1 < num2) {
+		print("Hello");
 	}
 
-	func2() {
-		print("2");
-	}
-
-	func1();
-	func2();
+	print("--------------------");
 }
 
 main();
 
-print(str); // error
+// print(num1);

@@ -96,7 +96,7 @@ namespace gs.compiler {
 					return null;
 				}
 
-				// function
+				// function, if
 				if ((fcbPos != -1 && fcbPos < overPos) || overPos == -1) {
 
 					if (commentPos != -1) {
@@ -116,10 +116,23 @@ namespace gs.compiler {
 						return null;
 					}
 
-					var srcNewHeader = _srcBody.Substring(readPos, fcbPos - readPos);
+					var srcNewHeader = _srcBody.Substring(readPos, fcbPos - readPos).Trim();
 					var srcNewBody = _srcBody.Substring(fcbPos + 1, fcePos - fcbPos - 1);
 					readPos = fcePos + 1;
 
+					var ifPos = srcNewHeader.IndexOf(Grammar.IF);
+					if (ifPos == 0) {
+						// if
+						var scriptIf = new ScriptIf(srcNewHeader, this);
+						if (!scriptIf.Condition()) {
+							continue;
+						}
+						var conditionExe = new ScriptMethod(srcNewBody, this);
+						conditionExe.Execute(null);
+						continue;
+					}
+
+					// function
 					var method = new ScriptMethod(srcNewHeader, srcNewBody, this);
 					var methodName = method._name;
 					if (!string.IsNullOrEmpty(methodName)) {
@@ -150,7 +163,7 @@ namespace gs.compiler {
 				var assignPos = sentence.IndexOf(Grammar.ASSIGN);
 				if (assignPos != -1) {
 					// assign sentence
-					var srcLeft = sentence.Substring(0, assignPos);
+					var srcLeft = sentence.Substring(0, assignPos).Trim();
 					var srcRight = sentence.Substring(assignPos + 1).Trim();
 
 					ScriptValue result = null;
@@ -173,7 +186,7 @@ namespace gs.compiler {
 					}
 
 					var varBeginPos = srcLeft.IndexOf(Grammar.VAR);
-					if (varBeginPos != -1) {
+					if (varBeginPos == 0) {
 						// var new object
 						var leftName = srcLeft.Substring(varBeginPos + Grammar.VAR.Length).Trim();
 						if (leftName.IndexOfAny(Grammar.SPECIAL_CHAR) != -1) {

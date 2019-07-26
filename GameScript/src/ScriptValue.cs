@@ -14,12 +14,100 @@ namespace gs.compiler {
 		private object _value = null;
 
 		public ScriptValue() { }
-		public ScriptValue(string src) {
+		public ScriptValue(object src) {
 			SetValue(src);
 		}
 
-		public void SetValue(string src) {
-			_src = src;
+		public static bool Compare(ScriptValue a, ScriptValue b) {
+			if (a == null && b == null) {
+				return true;
+			}
+			if (a == null || b == null) {
+				return false;
+			}
+			if (a.GetValueType() != b.GetValueType()) {
+				return false;
+			}
+			var type = a.GetValueType();
+			switch (type) {
+			case ScriptValueType.Null:
+				return true;
+			case ScriptValueType.Number:
+				return (double)a.GetValue() == (double)b.GetValue();
+			case ScriptValueType.String:
+				return (string)a.GetValue() == (string)b.GetValue();
+			case ScriptValueType.Bool:
+				return (bool)a.GetValue() == (bool)b.GetValue();
+			}
+			return false;
+		}
+
+		public static bool Less(ScriptValue a, ScriptValue b) {
+			if (a == null || b == null) {
+				return false;
+			}
+			if (a.GetValueType() != b.GetValueType()) {
+				return false;
+			}
+			var type = a.GetValueType();
+			switch (type) {
+			case ScriptValueType.Number:
+				return (double)a.GetValue() < (double)b.GetValue();
+			}
+			return false;
+		}
+
+		public static bool More(ScriptValue a, ScriptValue b) {
+			if (a == null || b == null) {
+				return false;
+			}
+			if (a.GetValueType() != b.GetValueType()) {
+				return false;
+			}
+			var type = a.GetValueType();
+			switch (type) {
+			case ScriptValueType.Number:
+				return (double)a.GetValue() > (double)b.GetValue();
+			}
+			return false;
+		}
+
+		public static bool LessEqual(ScriptValue a, ScriptValue b) {
+			if (a == null || b == null) {
+				return false;
+			}
+			if (a.GetValueType() != b.GetValueType()) {
+				return false;
+			}
+			var type = a.GetValueType();
+			switch (type) {
+			case ScriptValueType.Number:
+				return (double)a.GetValue() <= (double)b.GetValue();
+			}
+			return false;
+		}
+
+		public static bool MoreEqual(ScriptValue a, ScriptValue b) {
+			if (a == null || b == null) {
+				return false;
+			}
+			if (a.GetValueType() != b.GetValueType()) {
+				return false;
+			}
+			var type = a.GetValueType();
+			switch (type) {
+			case ScriptValueType.Number:
+				return (double)a.GetValue() >= (double)b.GetValue();
+			}
+			return false;
+		}
+
+		public void SetValue(object src) {
+			if (src == null) {
+				_src = "null";
+			} else {
+				_src = src.ToString();
+			}
 			_Parse();
 		}
 
@@ -30,6 +118,7 @@ namespace gs.compiler {
 				return;
 			}
 			if (tempSrc == "null") {
+				_type = ScriptValueType.Null;
 				return;
 			}
 			if (tempSrc == "true" || tempSrc == "false") {
@@ -48,6 +137,8 @@ namespace gs.compiler {
 				_value = tempDouble;
 				return;
 			}
+
+			_type = ScriptValueType.Null;
 			Logger.Error(tempSrc);
 		}
 
