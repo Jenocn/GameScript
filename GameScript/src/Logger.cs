@@ -19,13 +19,15 @@ namespace gs.compiler {
 
 		public static void Error(string src, string message = "") {
 			if (_func != null) {
-				_func("--------------------------------");
-				_func(string.Format("Error:{0}", message));
+				_func(" ");
+				_func(string.Format("> Error:{0}", message));
 				_func(src);
+				_func("--------------------------------");
 			} else {
-				Console.WriteLine("--------------------------------");
-				Console.WriteLine("Error:{0}", message);
+				Console.WriteLine(" ");
+				Console.WriteLine("> Error:{0}", message);
 				Console.WriteLine(src);
+				Console.WriteLine("--------------------------------");
 			}
 		}
 	}

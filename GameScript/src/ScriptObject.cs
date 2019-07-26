@@ -1,7 +1,6 @@
 ﻿
 namespace gs.compiler {
 	public sealed class ScriptObject {
-		private string _src = "";
 		private string _name = "";
 		private ScriptValue _value = new ScriptValue();
 

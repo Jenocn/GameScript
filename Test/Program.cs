@@ -24,9 +24,9 @@ namespace Test {
 				return ret;
 			});
 
-			var text = File.ReadAllText(@"D:\JenocnDocument\temp\GameScript\GameScript\test.gs");
-			var method = new ScriptMethod(text);
-			method.Execute(null);
+
+			var text = File.ReadAllText("../../test.gs");
+			var result = gs.VM.Execute(text);
 		}
 	}
 }

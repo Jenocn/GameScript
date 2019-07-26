@@ -52,6 +52,10 @@ namespace gs.compiler {
 						Logger.Error(srcHeader);
 						return;
 					}
+					if (_params.Contains(paramName)) {
+						Logger.Error(srcHeader);
+						return;
+					}
 					_params.Add(paramName);
 				}
 			}
@@ -130,7 +134,10 @@ namespace gs.compiler {
 							continue;
 						}
 						var conditionExe = new ScriptMethod(srcNewBody, this);
-						conditionExe.Execute(null);
+						var conditionResult = conditionExe.Execute(null);
+						if (conditionResult != null) {
+							return conditionResult;
+						}
 						continue;
 					}
 
@@ -201,7 +208,12 @@ namespace gs.compiler {
 
 						// =====================
 						// temp todo.....
-						result = new ScriptValue(srcRight);
+						var rightObj = FindObject(srcRight);
+						if (rightObj == null) {
+							result = new ScriptValue(srcRight);
+						} else {
+							result = rightObj.GetValue();
+						}
 						// =====================
 					}
 
