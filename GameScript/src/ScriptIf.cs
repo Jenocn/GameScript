@@ -110,6 +110,9 @@ namespace gs.compiler {
 
 			// temp
 			// todo...
+			// bool
+			var cValue = _CalcValue(srcCondition, space);
+			_condition = ScriptValue.Compare(cValue, new ScriptValue("true"));
 
 			// expression
 			// todo....

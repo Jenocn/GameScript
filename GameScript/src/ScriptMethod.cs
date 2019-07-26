@@ -159,8 +159,26 @@ namespace gs.compiler {
 					}
 				}
 
-				var sentence = _srcBody.Substring(readPos, overPos - readPos);
+				var sentence = _srcBody.Substring(readPos, overPos - readPos).Trim();
 				readPos = overPos + 1;
+
+				// return
+				var returnPos = sentence.IndexOf(Grammar.RETURN);
+				if (returnPos == 0) {
+					var returnValueStr = sentence.Substring(Grammar.RETURN.Length).Trim();
+					var returnFpbPos = returnValueStr.IndexOf(Grammar.FPB);
+					if (returnFpbPos != -1) {
+						// method
+						// todo..
+					} else {
+						var returnObj = FindObject(returnValueStr);
+						if (returnObj != null) {
+							return returnObj.GetValue();
+						} else {
+							return new ScriptValue(returnValueStr);
+						}
+					}
+				}
 
 				var assignPos = sentence.IndexOf(Grammar.ASSIGN);
 				if (assignPos != -1) {

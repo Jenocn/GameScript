@@ -1,7 +1,11 @@
 ﻿namespace gs.compiler {
 	public class Grammar {
 
+		// sentence over
 		public static readonly char OVER = ';';
+
+		// return
+		public static readonly string RETURN = "return";
 
 		// function content begin
 		public static readonly char FCB = '{';
