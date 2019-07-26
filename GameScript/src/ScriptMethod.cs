@@ -125,6 +125,8 @@ namespace gs.compiler {
 						// if
 						var scriptIf = new ScriptIf(srcNewHeader, this);
 						if (!scriptIf.Condition()) {
+							// else
+							// todo...
 							continue;
 						}
 						var conditionExe = new ScriptMethod(srcNewBody, this);

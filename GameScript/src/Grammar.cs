@@ -23,6 +23,7 @@
 
 		// if sign
 		public static readonly string IF = "if";
+		public static readonly string ELSE = "else";
 
 		// compare
 		public static readonly string COMPARE_EQUIP = "==";
