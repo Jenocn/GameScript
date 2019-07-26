@@ -79,14 +79,36 @@ namespace gs.compiler {
 				if (readPos >= _srcBody.Length) {
 					break;
 				}
+
 				var overPos = _srcBody.IndexOf(Grammar.OVER, readPos);
 				var fcbPos = _srcBody.IndexOf(Grammar.FCB, readPos);
+				var commentPos = _srcBody.IndexOf(Grammar.COMMENT, readPos);
 				if (overPos == -1 && fcbPos == -1) {
+					if (commentPos != -1) {
+						var tailPos = _srcBody.IndexOf('\n', commentPos);
+						if (tailPos == -1) {
+							tailPos = _srcBody.Length;
+						}
+						readPos = tailPos + 1;
+						continue;
+					}
 					Logger.Error(_srcBody);
 					return null;
 				}
+
 				// function
 				if ((fcbPos != -1 && fcbPos < overPos) || overPos == -1) {
+
+					if (commentPos != -1) {
+						if (commentPos < fcbPos) {
+							var tailPos = _srcBody.IndexOf('\n', commentPos);
+							if (tailPos == -1) {
+								tailPos = _srcBody.Length;
+							}
+							readPos = tailPos + 1;
+							continue;
+						}
+					}
 
 					var fcePos = _ReadNextFCE(_srcBody, fcbPos + 1);
 					if (fcePos == -1) {
@@ -109,7 +131,19 @@ namespace gs.compiler {
 					}
 					continue;
 				}
+
 				// sentence
+				if (commentPos != -1) {
+					if (commentPos < overPos) {
+						var tailPos = _srcBody.IndexOf('\n', commentPos);
+						if (tailPos == -1) {
+							tailPos = _srcBody.Length;
+						}
+						readPos = tailPos + 1;
+						continue;
+					}
+				}
+
 				var sentence = _srcBody.Substring(readPos, overPos - readPos);
 				readPos = overPos + 1;
 

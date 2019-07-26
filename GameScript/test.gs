@@ -1,19 +1,19 @@
 main() {
 
-	var str = "";
-	str = "Hello World!";
-
-	print(str);
-
-	str = "1234";
+	var str = "Hello World!";
 
 	func1() {
-		str = "Hi";
+		print(str);
+	}
+
+	func2() {
+		print("2");
 	}
 
 	func1();
-
-	print(str);
+	func2();
 }
 
 main();
+
+print(str); // error

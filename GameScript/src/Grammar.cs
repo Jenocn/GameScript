@@ -18,6 +18,9 @@
 		// string sign
 		public static readonly char SS = '\"';
 
+		// comment sign
+		public static readonly string COMMENT = "//";
+
 		// assign sign
 		public static readonly char ASSIGN = '=';
 
