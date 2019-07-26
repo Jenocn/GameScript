@@ -116,42 +116,107 @@ namespace gs.compiler {
 				var assignPos = sentence.IndexOf(Grammar.ASSIGN);
 				if (assignPos != -1) {
 					// assign sentence
-				} else {
-					// method call
-					var fpbPos = sentence.IndexOf(Grammar.FPB);
-					var fpePos = sentence.IndexOf(Grammar.FPE);
-					if (fpbPos == -1 || fpbPos >= fpePos) {
-						Logger.Error(sentence);
-						continue;
-					}
-					var methodName = sentence.Substring(0, fpbPos).Trim();
-					if (methodName.IndexOfAny(Grammar.SPECIAL_CHAR) != -1) {
-						Logger.Error(sentence);
-						continue;
-					}
-					var methodArgs = sentence.Substring(fpbPos + 1, fpePos - fpbPos - 1);
-					var argArr = methodArgs.Split(Grammar.FPS);
-					var scriptParam = new List<ScriptValue>();
-					for (int i = 0; i < argArr.Length; ++i) {
-						var argStr = argArr[i].Trim();
-						var scriptValue = new ScriptValue(argStr);
-						scriptParam.Add(scriptValue);
-					}
+					var srcLeft = sentence.Substring(0, assignPos);
+					var srcRight = sentence.Substring(assignPos + 1).Trim();
 
-					var method = FindMethod(methodName);
-					if (method != null) {
-						method.Execute(scriptParam);
-					} else {
-						if (StandardMethod.Container(methodName)) {
-							StandardMethod.Execute(methodName, scriptParam);
-						} else {
+					ScriptValue result = null;
+					var rFcbPos = srcRight.IndexOf(Grammar.FPB);
+					if (rFcbPos != -1) {
+						// method call
+						var rFcePos = srcRight.IndexOf(Grammar.FPE);
+						if (rFcbPos >= rFcePos) {
 							Logger.Error(sentence);
 							continue;
 						}
+						result = _SrcMethodCall(srcRight);
+					} else {
+						// expression
+
+						// =====================
+						// temp todo.....
+						result = new ScriptValue(srcRight);
+						// =====================
 					}
+
+					var varBeginPos = srcLeft.IndexOf(Grammar.VAR);
+					if (varBeginPos != -1) {
+						// var new object
+						var leftName = srcLeft.Substring(varBeginPos + Grammar.VAR.Length).Trim();
+						if (leftName.IndexOfAny(Grammar.SPECIAL_CHAR) != -1) {
+							Logger.Error(sentence);
+							continue;
+						}
+						var obj = FindObject(leftName);
+						if (obj != null) {
+							Logger.Error(sentence, leftName + " is exists!");
+							continue;
+						}
+						_objects.Add(leftName, new ScriptObject(leftName, result));
+					} else {
+						var leftName = srcLeft.Trim();
+						if (leftName.IndexOfAny(Grammar.SPECIAL_CHAR) != -1) {
+							Logger.Error(sentence);
+							continue;
+						}
+						var obj = FindObject(leftName);
+						if (obj == null) {
+							Logger.Error(sentence);
+							continue;
+						}
+						obj.SetValue(result);
+					}
+
+				} else {
+					// method call
+					_SrcMethodCall(sentence);
 				}
 			}
 			return null;
+		}
+
+		private ScriptValue _SrcMethodCall(string sentence) {
+			var fpbPos = sentence.IndexOf(Grammar.FPB);
+			var fpePos = sentence.IndexOf(Grammar.FPE);
+			if (fpbPos == -1 || fpbPos >= fpePos) {
+				Logger.Error(sentence);
+				return null;
+			}
+			var methodName = sentence.Substring(0, fpbPos).Trim();
+			if (methodName.IndexOfAny(Grammar.SPECIAL_CHAR) != -1) {
+				Logger.Error(sentence);
+				return null;
+			}
+			var scriptParam = new List<ScriptValue>();
+			var methodArgs = sentence.Substring(fpbPos + 1, fpePos - fpbPos - 1).Trim();
+			if (!string.IsNullOrEmpty(methodArgs)) {
+				var argArr = methodArgs.Split(Grammar.FPS);
+				for (int i = 0; i < argArr.Length; ++i) {
+					var argStr = argArr[i].Trim();
+					if (string.IsNullOrEmpty(argStr)) {
+						Logger.Log(sentence);
+						break;
+					}
+					ScriptValue scriptValue = null;
+					var obj = FindObject(argStr);
+					if (obj != null) {
+						scriptValue = obj.GetValue();
+					} else {
+						scriptValue = new ScriptValue(argStr);
+					}
+					scriptParam.Add(scriptValue);
+				}
+			}
+
+			var method = FindMethod(methodName);
+			if (method == null) {
+				if (MethodLibrary.Container(methodName)) {
+					return MethodLibrary.Execute(methodName, scriptParam);
+				} else {
+					Logger.Error(sentence);
+					return null;
+				}
+			}
+			return method.Execute(scriptParam);
 		}
 
 		private int _ReadNextFCE(string src, int start) {
@@ -176,6 +241,16 @@ namespace gs.compiler {
 			if (!_methods.TryGetValue(name, out ret)) {
 				if (_parent != null) {
 					return _parent.FindMethod(name);
+				}
+			}
+			return ret;
+		}
+
+		public ScriptObject FindObject(string name) {
+			ScriptObject ret = null;
+			if (!_objects.TryGetValue(name, out ret)) {
+				if (_parent != null) {
+					return _parent.FindObject(name);
 				}
 			}
 			return ret;

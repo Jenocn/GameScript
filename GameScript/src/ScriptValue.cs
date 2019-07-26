@@ -26,6 +26,10 @@ namespace gs.compiler {
 		private void _Parse() {
 			var tempSrc = _src.Trim();
 			if (string.IsNullOrEmpty(tempSrc)) {
+				Logger.Error("", "empty value!");
+				return;
+			}
+			if (tempSrc == "null") {
 				return;
 			}
 			if (tempSrc == "true" || tempSrc == "false") {
@@ -33,7 +37,7 @@ namespace gs.compiler {
 				_value = bool.Parse(tempSrc);
 				return;
 			}
-			if (tempSrc.Length > 2 && tempSrc[0] == Grammar.SS && tempSrc[tempSrc.Length - 1] == Grammar.SS) {
+			if (tempSrc.Length >= 2 && tempSrc[0] == Grammar.SS && tempSrc[tempSrc.Length - 1] == Grammar.SS) {
 				_type = ScriptValueType.String;
 				_value = tempSrc.Substring(1, tempSrc.Length - 2);
 				return;

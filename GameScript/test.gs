@@ -1,10 +1,19 @@
 main() {
+
+	var str = "";
+	str = "Hello World!";
+
+	print(str);
+
+	str = "1234";
+
 	func1() {
-		print(15);
+		str = "Hi";
 	}
 
-	print("HelloWorld!");
 	func1();
+
+	print(str);
 }
 
 main();

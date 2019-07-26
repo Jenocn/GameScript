@@ -14,6 +14,14 @@ namespace gs.compiler {
 			_Parse();
 		}
 
+		public ScriptValue GetValue() {
+			return _value;
+		}
+
+		public void SetValue(ScriptValue value) {
+			_value = value;
+		}
+
 		private void _Parse() {
 			string tempSrc = _src.Trim();
 			if (string.IsNullOrEmpty(tempSrc)) {

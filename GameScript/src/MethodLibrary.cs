@@ -1,23 +1,33 @@
 ﻿using System.Collections.Generic;
 
 namespace gs.compiler {
-	public static class StandardMethod {
+	public static class MethodLibrary {
 		private static Dictionary<string, System.Func<List<ScriptValue>, ScriptValue>> _methods = new Dictionary<string, System.Func<List<ScriptValue>, ScriptValue>>();
 
-		static StandardMethod() {
+		static MethodLibrary() {
 			_methods.Add("print", _std_print);
 		}
 
 		private static ScriptValue _std_print(List<ScriptValue> args) {
 			string message = "";
 			if (args != null && args.Count > 0) {
-				var value = args[0].GetValue();
-				if (value != null) {
-					message = value.ToString();
+				if (args[0] != null) {
+					var value = args[0].GetValue();
+					if (value != null) {
+						message = value.ToString();
+					}
 				}
 			}
 			Logger.Log(message);
 			return null;
+		}
+
+		public static bool RegisterMethod(string name, System.Func<List<ScriptValue>, ScriptValue> func) {
+			if (Container(name)) {
+				return false;
+			}
+			_methods.Add(name, func);
+			return true;
 		}
 
 		public static bool Container(string name) {
