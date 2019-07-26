@@ -46,6 +46,7 @@
     <Compile Include="src\ScriptSentence.cs" />
     <Compile Include="src\ScriptObject.cs" />
     <Compile Include="src\ScriptValue.cs" />
+    <Compile Include="src\StandardMethod.cs" />
     <Compile Include="src\VM.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

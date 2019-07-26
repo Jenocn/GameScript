@@ -26,7 +26,6 @@ namespace gs.compiler {
 		private void _Parse() {
 			var tempSrc = _src.Trim();
 			if (string.IsNullOrEmpty(tempSrc)) {
-				Logger.Error(tempSrc);
 				return;
 			}
 			if (tempSrc == "true" || tempSrc == "false") {
