@@ -10,7 +10,7 @@ namespace Test {
 	class Program {
 		static void Main(string[] args) {
 			var text = File.ReadAllText("../../test.gs");
-			gs.VM.ExecuteCache(text);
+			gs.VM.Execute(text);
 		}
 	}
 }

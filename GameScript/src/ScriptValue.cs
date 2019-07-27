@@ -8,9 +8,7 @@ namespace gs.compiler {
 	}
 
 	public sealed class ScriptValue {
-		private string _src = "";
 		private ScriptValueType _type = ScriptValueType.Null;
-
 		private object _value = null;
 
 		public ScriptValue() { }
@@ -104,15 +102,14 @@ namespace gs.compiler {
 
 		public void SetValue(object src) {
 			if (src == null) {
-				_src = "null";
+				_Parse("null");
 			} else {
-				_src = src.ToString().ToLower();
+				_Parse(src.ToString().ToLower());
 			}
-			_Parse();
 		}
 
-		private void _Parse() {
-			var tempSrc = _src.Trim();
+		private void _Parse(string srcStr) {
+			var tempSrc = srcStr.Trim();
 			if (string.IsNullOrEmpty(tempSrc)) {
 				Logger.Error("", "empty value!");
 				return;

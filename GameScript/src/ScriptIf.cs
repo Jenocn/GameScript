@@ -28,7 +28,7 @@ namespace gs.compiler {
 				return false;
 			}
 
-			ScriptValue tempValue = new ScriptValue();
+			ScriptValue tempValue = null;
 			if (!ScriptExpression.Execute(srcCondition, space, out tempValue)) {
 				Logger.Error(tempSrc);
 				return false;
