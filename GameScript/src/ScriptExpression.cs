@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace gs.compiler {
 	public static class ScriptExpression {
@@ -179,9 +180,9 @@ namespace gs.compiler {
 				}
 				while (true) {
 					var highSignPos = calcSrc.IndexOfAny(highSign);
-					if (highSignPos == -1) { break; }
+					if (highSignPos <= 0) { break; }
 					char tempSign = calcSrc[highSignPos];
-					var findOL = calcSrc.IndexOfAny(mathSign, 0, highSignPos);
+					var findOL = calcSrc.LastIndexOfAny(mathSign, highSignPos - 1);
 					int startPosOL = 0;
 					int endPosOR = 0;
 					string srcOL = "";
@@ -189,6 +190,19 @@ namespace gs.compiler {
 						srcOL = calcSrc.Substring(0, highSignPos);
 						startPosOL = 0;
 					} else {
+						if (calcSrc[findOL] == '-') {
+							if (findOL == 0) {
+								--findOL;
+							} else {
+								var checkSignPos = calcSrc.IndexOfAny(mathSign, 0, findOL);
+								if (checkSignPos != -1) {
+									var checkStr = calcSrc.Substring(checkSignPos + 1, findOL).Trim();
+									if (string.IsNullOrEmpty(checkStr)) {
+										findOL = checkSignPos;
+									}
+								}
+							}
+						}
 						srcOL = calcSrc.Substring(findOL + 1, highSignPos - findOL - 1);
 						startPosOL = findOL + 1;
 					}
@@ -207,6 +221,17 @@ namespace gs.compiler {
 						endPosOR = calcSrc.Length;
 					} else {
 						srcOR = calcSrc.Substring(highSignPos + 1, findOR - highSignPos - 1);
+						if (string.IsNullOrEmpty(srcOR.Trim())) {
+							if (calcSrc[findOR] == '-') {
+								var checkSignPos = calcSrc.IndexOfAny(mathSign, findOR + 1);
+								if (checkSignPos != -1) {
+									findOR = checkSignPos;
+								} else {
+									findOR = calcSrc.Length;
+								}
+								srcOR = calcSrc.Substring(highSignPos + 1, findOR - highSignPos - 1);
+							}
+						}
 						endPosOR = findOR;
 					}
 					ScriptValue valueOR = null;
@@ -222,9 +247,9 @@ namespace gs.compiler {
 				}
 				while (true) {
 					var lowSignPos = calcSrc.IndexOfAny(lowSign);
-					if (lowSignPos == -1) { break; }
+					if (lowSignPos <= 0) { break; }
 					char tempSign = calcSrc[lowSignPos];
-					var findOL = calcSrc.IndexOfAny(mathSign, 0, lowSignPos);
+					var findOL = calcSrc.LastIndexOfAny(mathSign, lowSignPos - 1);
 					int startPosOL = 0;
 					int endPosOR = 0;
 					string srcOL = "";
@@ -232,6 +257,19 @@ namespace gs.compiler {
 						srcOL = calcSrc.Substring(0, lowSignPos);
 						startPosOL = 0;
 					} else {
+						if (calcSrc[findOL] == '-') {
+							if (findOL == 0) {
+								--findOL;
+							} else {
+								var checkSignPos = calcSrc.IndexOfAny(mathSign, 0, findOL);
+								if (checkSignPos != -1) {
+									var checkStr = calcSrc.Substring(checkSignPos + 1, findOL).Trim();
+									if (string.IsNullOrEmpty(checkStr)) {
+										findOL = checkSignPos;
+									}
+								}
+							}
+						}
 						srcOL = calcSrc.Substring(findOL + 1, lowSignPos - findOL - 1);
 						startPosOL = findOL + 1;
 					}
@@ -250,6 +288,18 @@ namespace gs.compiler {
 						endPosOR = calcSrc.Length;
 					} else {
 						srcOR = calcSrc.Substring(lowSignPos + 1, findOR - lowSignPos - 1);
+						if (string.IsNullOrEmpty(srcOR.Trim())) {
+							if (calcSrc[findOR] == '-') {
+								var checkSignPos = calcSrc.IndexOfAny(mathSign, findOR + 1);
+								if (checkSignPos != -1) {
+									findOR = checkSignPos;
+								} else {
+									findOR = calcSrc.Length;
+								}
+								srcOR = calcSrc.Substring(lowSignPos + 1, findOR - lowSignPos - 1);
+							}
+						}
+						endPosOR = findOR;
 						endPosOR = findOR;
 					}
 					ScriptValue valueOR = null;
@@ -282,7 +332,7 @@ namespace gs.compiler {
 				return value1 * value2;
 			}
 			if (sign == '/') {
-				return value1 / value2;
+				return Math.Round(value1 / value2, 6);
 			}
 			if (sign == '%') {
 				return value1 % value2;
