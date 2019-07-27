@@ -9,11 +9,8 @@ namespace gs.compiler {
 
 			// check validity
 			var fpbPos = tempSrc.IndexOf(Grammar.FPB);
-			var fpePos = tempSrc.LastIndexOf(Grammar.FPE);
-			if (fpbPos == -1 && fpePos == -1) {
-				return false;
-			}
-			if (fpbPos != -1 && fpbPos >= fpePos) {
+			int fpePos = tool.GrammarTool.ReadPairSignPos(tempSrc, fpbPos + 1, Grammar.FPB, Grammar.FPE);
+			if (fpbPos == -1 || fpbPos >= fpePos) {
 				return false;
 			}
 			if (fpePos != tempSrc.Length - 1) {
@@ -21,6 +18,11 @@ namespace gs.compiler {
 			}
 
 			var methodName = tempSrc.Substring(0, fpbPos).Trim();
+			var findMethod = space.FindMethod(methodName);
+			bool bMethod = (findMethod != null) || MethodLibrary.Container(methodName);
+			if (!bMethod) {
+				return false;
+			}
 			var scriptParams = new List<ScriptValue>();
 			var srcArgs = tempSrc.Substring(fpbPos + 1, fpePos - fpbPos - 1).Trim();
 			if (!string.IsNullOrEmpty(srcArgs)) {
@@ -28,25 +30,17 @@ namespace gs.compiler {
 				for (int i = 0; i < argArr.Length; ++i) {
 					var argStr = argArr[i].Trim();
 					if (string.IsNullOrEmpty(argStr)) {
-						Logger.Error(src);
 						return false;
 					}
 					if (!ScriptExpression.Execute(argStr, space, out result)) {
-						Logger.Error(src);
 						return false;
 					}
 					scriptParams.Add(result);
 				}
 			}
-			var findMethod = space.FindMethod(methodName);
 			if (findMethod == null) {
-				if (MethodLibrary.Container(methodName)) {
-					result = MethodLibrary.Execute(methodName, scriptParams);
-					return true;
-				} else {
-					Logger.Error(src);
-					return false;
-				}
+				result = MethodLibrary.Execute(methodName, scriptParams);
+				return true;
 			}
 			bool bReturn = false;
 			return findMethod.Execute(scriptParams, out bReturn, out result);

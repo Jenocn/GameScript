@@ -3,35 +3,38 @@
 namespace gs.compiler {
 	public static class ScriptIf {
 
-		public static bool Execute(string src, ScriptMethod space, out bool result) {
+		public static bool Execute(string ifSrc, ScriptMethod space, out bool result) {
 
 			result = false;
 
-			int fpbPos = src.IndexOf(Grammar.FPB);
-			int fpePos = src.LastIndexOf(Grammar.FPE);
+			var tempSrc = ifSrc.Trim();
+
+			int fpbPos = tempSrc.IndexOf(Grammar.FPB);
+			int fpePos = tool.GrammarTool.ReadPairSignPos(tempSrc, fpbPos + 1, Grammar.FPB, Grammar.FPE);
+
 			if (fpbPos == -1 || fpbPos >= fpePos) {
-				Logger.Error(src);
+				Logger.Error(tempSrc);
 				return false;
 			}
-			var nameSrc = src.Substring(0, fpbPos).Trim();
+			var nameSrc = tempSrc.Substring(0, fpbPos).Trim();
 			if (nameSrc != Grammar.IF) {
-				Logger.Error(src);
+				Logger.Error(tempSrc);
 				return false;
 			}
 
-			var srcCondition = src.Substring(fpbPos + 1, fpePos - fpbPos - 1).Trim();
+			var srcCondition = tempSrc.Substring(fpbPos + 1, fpePos - fpbPos - 1).Trim();
 			if (string.IsNullOrEmpty(srcCondition)) {
-				Logger.Error(src);
+				Logger.Error(tempSrc);
 				return false;
 			}
 
 			ScriptValue tempValue = new ScriptValue();
 			if (!ScriptExpression.Execute(srcCondition, space, out tempValue)) {
-				Logger.Error(src);
+				Logger.Error(tempSrc);
 				return false;
 			}
 			if (tempValue.GetValueType() != ScriptValueType.Bool) {
-				Logger.Error(src);
+				Logger.Error(tempSrc);
 				return false;
 			}
 			result = (bool)tempValue.GetValue();

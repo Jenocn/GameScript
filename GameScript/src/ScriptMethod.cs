@@ -24,7 +24,7 @@ namespace gs.compiler {
 
 		private void _ParseHeader(string srcHeader) {
 			int fpbPos = srcHeader.IndexOf(Grammar.FPB);
-			int fpePos = srcHeader.IndexOf(Grammar.FPE);
+			int fpePos = tool.GrammarTool.ReadPairSignPos(srcHeader, fpbPos + 1, Grammar.FPB, Grammar.FPE);
 			if (fpbPos == -1 || fpbPos >= fpePos) {
 				Logger.Error(srcHeader);
 				return;
@@ -117,7 +117,7 @@ namespace gs.compiler {
 						}
 					}
 
-					var fcePos = _ReadNextFCE(_srcBody, fcbPos + 1);
+					var fcePos = tool.GrammarTool.ReadPairSignPos(_srcBody, fcbPos + 1, Grammar.FCB, Grammar.FCE);
 					if (fcePos == -1) {
 						Logger.Error(_srcBody);
 						return false;
@@ -214,19 +214,13 @@ namespace gs.compiler {
 					var srcRight = sentence.Substring(assignPos + 1).Trim();
 
 					ScriptValue result = new ScriptValue();
+					bool bMethodCallSuccess = false;
 					var rFcbPos = srcRight.IndexOf(Grammar.FPB);
 					if (rFcbPos != -1) {
 						// method call
-						var rFcePos = srcRight.IndexOf(Grammar.FPE);
-						if (rFcbPos >= rFcePos) {
-							Logger.Error(sentence);
-							continue;
-						}
-						if (!ScriptMethodCall.Execute(srcRight, this, out result)) {
-							Logger.Error(sentence);
-							continue;
-						}
-					} else {
+						bMethodCallSuccess = ScriptMethodCall.Execute(srcRight, this, out result);
+					}
+					if (!bMethodCallSuccess) {
 						// expression
 						if (!ScriptExpression.Execute(srcRight, this, out result)) {
 							Logger.Error(sentence);
@@ -272,23 +266,6 @@ namespace gs.compiler {
 				}
 			}
 			return true;
-		}
-
-		private int _ReadNextFCE(string src, int start) {
-			if (start >= src.Length) { return -1; }
-			int findFCB = 0;
-			for (int i = start; i < src.Length; ++i) {
-				char ch = src[i];
-				if (ch == Grammar.FCB) {
-					++findFCB;
-				} else if (ch == Grammar.FCE) {
-					--findFCB;
-				}
-				if (findFCB == -1) {
-					return i;
-				}
-			}
-			return -1;
 		}
 
 		public ScriptMethod FindMethod(string name) {
