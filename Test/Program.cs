@@ -9,24 +9,8 @@ using gs.compiler;
 namespace Test {
 	class Program {
 		static void Main(string[] args) {
-
-			MethodLibrary.RegisterMethod("sum", (List<ScriptValue> param) => {
-				ScriptValue ret = new ScriptValue(0);
-				if (param == null) { return ret; }
-				double value = 0;
-				foreach (var item in param) {
-					if (item == null) { continue; }
-					if (item.GetValueType() != ScriptValueType.Number) { continue; }
-					var sv = (double)item.GetValue();
-					value += sv;
-				}
-				ret.SetValue(value);
-				return ret;
-			});
-
-
 			var text = File.ReadAllText("../../test.gs");
-			var result = gs.VM.Execute(text);
+			gs.VM.ExecuteCache(text);
 		}
 	}
 }
