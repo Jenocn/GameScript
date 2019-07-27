@@ -71,6 +71,7 @@ namespace gs.compiler {
 
 			bMethodReturn = false;
 			methodReturnResult = new ScriptValue();
+			_objects.Clear();
 
 			// args
 			if (args != null && args.Count > 0) {
@@ -80,8 +81,9 @@ namespace gs.compiler {
 					if (i < args.Count) {
 						paramValue = args[i];
 					}
-					_objects[paramName] = new ScriptObject(paramName, paramValue);
+					_objects.Add(paramName, new ScriptObject(paramName, paramValue));
 				}
+
 			}
 
 			int readPos = 0;
