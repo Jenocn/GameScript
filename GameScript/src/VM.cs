@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*
+ * By Jenocn
+ * https://jenocn.github.io/
+*/
+
+using System;
 using System.Collections.Generic;
 using gs.compiler;
 

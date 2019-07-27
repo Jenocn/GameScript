@@ -1,4 +1,9 @@
-﻿namespace gs.compiler {
+﻿/*
+ * By Jenocn
+ * https://jenocn.github.io/
+*/
+
+namespace gs.compiler {
 	public class Grammar {
 
 		// sentence over

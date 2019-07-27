@@ -1,4 +1,8 @@
-﻿
+﻿/*
+ * By Jenocn
+ * https://jenocn.github.io/
+*/
+
 namespace gs.compiler {
 	public sealed class ScriptObject {
 		private string _name = "";

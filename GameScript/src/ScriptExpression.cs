@@ -1,5 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿/*
+ * By Jenocn
+ * https://jenocn.github.io/
+*/
+
+using System;
 
 namespace gs.compiler {
 	public static class ScriptExpression {

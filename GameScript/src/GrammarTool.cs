@@ -1,4 +1,8 @@
-﻿
+﻿/*
+ * By Jenocn
+ * https://jenocn.github.io/
+*/
+
 namespace gs.compiler.tool {
 	public static class GrammarTool {
 		public static int ReadPairSignPos(string src, int start, char left, char right) {

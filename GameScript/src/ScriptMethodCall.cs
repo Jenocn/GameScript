@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * By Jenocn
+ * https://jenocn.github.io/
+*/
+
+using System.Collections.Generic;
 
 namespace gs.compiler {
 	public static class ScriptMethodCall {

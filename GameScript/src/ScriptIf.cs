@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * By Jenocn
+ * https://jenocn.github.io/
+*/
 
 namespace gs.compiler {
 	public static class ScriptIf {
