@@ -63,14 +63,17 @@ namespace gs.compiler {
 			_name = nameSrc;
 		}
 
-		public ScriptValue Execute(List<ScriptValue> args) {
+		public bool Execute(List<ScriptValue> args, out bool bMethodReturn, out ScriptValue methodReturnResult) {
+
+			bMethodReturn = false;
+			methodReturnResult = new ScriptValue();
 			_objects.Clear();
 
 			// args
 			if (args != null && args.Count > 0) {
 				for (int i = 0; i < _params.Count; ++i) {
 					string paramName = _params[i];
-					ScriptValue paramValue = null;
+					ScriptValue paramValue = new ScriptValue();
 					if (i < args.Count) {
 						paramValue = args[i];
 					}
@@ -97,7 +100,7 @@ namespace gs.compiler {
 						continue;
 					}
 					Logger.Error(_srcBody);
-					return null;
+					return false;
 				}
 
 				// function, if
@@ -117,7 +120,7 @@ namespace gs.compiler {
 					var fcePos = _ReadNextFCE(_srcBody, fcbPos + 1);
 					if (fcePos == -1) {
 						Logger.Error(_srcBody);
-						return null;
+						return false;
 					}
 
 					var srcNewHeader = _srcBody.Substring(readPos, fcbPos - readPos).Trim();
@@ -127,16 +130,27 @@ namespace gs.compiler {
 					var ifPos = srcNewHeader.IndexOf(Grammar.IF);
 					if (ifPos == 0) {
 						// if
-						var scriptIf = new ScriptIf(srcNewHeader, this);
-						if (!scriptIf.Condition()) {
+						bool bCondition = false;
+						if (!ScriptIf.Execute(srcNewHeader, this, out bCondition)) {
+							Logger.Error(srcNewHeader);
+							continue;
+						}
+
+						if (!bCondition) {
 							// else
 							// todo...
 							continue;
 						}
 						var conditionExe = new ScriptMethod(srcNewBody, this);
-						var conditionResult = conditionExe.Execute(null);
-						if (conditionResult != null) {
-							return conditionResult;
+						ScriptValue conditionResult = new ScriptValue();
+						bool bConditionReturn = false;
+						if (!conditionExe.Execute(null, out bConditionReturn, out conditionResult)) {
+							Logger.Error(srcNewHeader);
+							continue;
+						}
+						if (bConditionReturn) {
+							methodReturnResult = conditionResult;
+							return true;
 						}
 						continue;
 					}
@@ -172,19 +186,25 @@ namespace gs.compiler {
 				// return
 				var returnPos = sentence.IndexOf(Grammar.RETURN);
 				if (returnPos == 0) {
+					bMethodReturn = true;
+					ScriptValue result = new ScriptValue();
 					var returnValueStr = sentence.Substring(Grammar.RETURN.Length).Trim();
 					var returnFpbPos = returnValueStr.IndexOf(Grammar.FPB);
 					if (returnFpbPos != -1) {
 						// method
-						// todo..
+						if (!ScriptMethodCall.Execute(returnValueStr, this, out result)) {
+							Logger.Error(sentence);
+							return false;
+						}
 					} else {
-						var returnObj = FindObject(returnValueStr);
-						if (returnObj != null) {
-							return returnObj.GetValue();
-						} else {
-							return new ScriptValue(returnValueStr);
+
+						if (!ScriptExpression.Execute(returnValueStr, this, out result)) {
+							Logger.Error(sentence);
+							return false;
 						}
 					}
+					methodReturnResult = result;
+					return true;
 				}
 
 				var assignPos = sentence.IndexOf(Grammar.ASSIGN);
@@ -193,7 +213,7 @@ namespace gs.compiler {
 					var srcLeft = sentence.Substring(0, assignPos).Trim();
 					var srcRight = sentence.Substring(assignPos + 1).Trim();
 
-					ScriptValue result = null;
+					ScriptValue result = new ScriptValue();
 					var rFcbPos = srcRight.IndexOf(Grammar.FPB);
 					if (rFcbPos != -1) {
 						// method call
@@ -202,19 +222,16 @@ namespace gs.compiler {
 							Logger.Error(sentence);
 							continue;
 						}
-						result = _SrcMethodCall(srcRight);
+						if (!ScriptMethodCall.Execute(srcRight, this, out result)) {
+							Logger.Error(sentence);
+							continue;
+						}
 					} else {
 						// expression
-
-						// =====================
-						// temp todo.....
-						var rightObj = FindObject(srcRight);
-						if (rightObj == null) {
-							result = new ScriptValue(srcRight);
-						} else {
-							result = rightObj.GetValue();
+						if (!ScriptExpression.Execute(srcRight, this, out result)) {
+							Logger.Error(sentence);
+							continue;
 						}
-						// =====================
 					}
 
 					var varBeginPos = srcLeft.IndexOf(Grammar.VAR);
@@ -247,55 +264,14 @@ namespace gs.compiler {
 
 				} else {
 					// method call
-					_SrcMethodCall(sentence);
-				}
-			}
-			return null;
-		}
-
-		private ScriptValue _SrcMethodCall(string sentence) {
-			var fpbPos = sentence.IndexOf(Grammar.FPB);
-			var fpePos = sentence.IndexOf(Grammar.FPE);
-			if (fpbPos == -1 || fpbPos >= fpePos) {
-				Logger.Error(sentence);
-				return null;
-			}
-			var methodName = sentence.Substring(0, fpbPos).Trim();
-			if (methodName.IndexOfAny(Grammar.SPECIAL_CHAR) != -1) {
-				Logger.Error(sentence);
-				return null;
-			}
-			var scriptParam = new List<ScriptValue>();
-			var methodArgs = sentence.Substring(fpbPos + 1, fpePos - fpbPos - 1).Trim();
-			if (!string.IsNullOrEmpty(methodArgs)) {
-				var argArr = methodArgs.Split(Grammar.FPS);
-				for (int i = 0; i < argArr.Length; ++i) {
-					var argStr = argArr[i].Trim();
-					if (string.IsNullOrEmpty(argStr)) {
-						Logger.Log(sentence);
-						break;
+					ScriptValue tempRet = new ScriptValue();
+					if (!ScriptMethodCall.Execute(sentence, this, out tempRet)) {
+						Logger.Error(sentence);
+						continue;
 					}
-					ScriptValue scriptValue = null;
-					var obj = FindObject(argStr);
-					if (obj != null) {
-						scriptValue = obj.GetValue();
-					} else {
-						scriptValue = new ScriptValue(argStr);
-					}
-					scriptParam.Add(scriptValue);
 				}
 			}
-
-			var method = FindMethod(methodName);
-			if (method == null) {
-				if (MethodLibrary.Container(methodName)) {
-					return MethodLibrary.Execute(methodName, scriptParam);
-				} else {
-					Logger.Error(sentence);
-					return null;
-				}
-			}
-			return method.Execute(scriptParam);
+			return true;
 		}
 
 		private int _ReadNextFCE(string src, int start) {

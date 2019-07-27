@@ -42,8 +42,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="src\Logger.cs" />
     <Compile Include="src\Grammar.cs" />
+    <Compile Include="src\ScriptExpression.cs" />
     <Compile Include="src\ScriptIf.cs" />
     <Compile Include="src\ScriptMethod.cs" />
+    <Compile Include="src\ScriptMethodCall.cs" />
     <Compile Include="src\ScriptObject.cs" />
     <Compile Include="src\ScriptValue.cs" />
     <Compile Include="src\MethodLibrary.cs" />

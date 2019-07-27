@@ -42,6 +42,7 @@
 		// var
 		public static readonly string VAR = "var";
 
+		// special char of name
 		public static readonly char[] SPECIAL_CHAR = new char[] { ' ', '\n' };
 	}
 }

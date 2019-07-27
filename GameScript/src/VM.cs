@@ -6,7 +6,10 @@ namespace gs {
 	public static class VM {
 		public static ScriptValue Execute(string src) {
 			var scriptMethod = new ScriptMethod(src);
-			return scriptMethod.Execute(null);
+			bool bReturn = false;
+			ScriptValue returnValue = new ScriptValue();
+			scriptMethod.Execute(null, out bReturn, out returnValue);
+			return returnValue;
 		}
 
 		public static bool RegisterMethod(string name, Func<List<ScriptValue>, ScriptValue> func) {

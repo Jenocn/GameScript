@@ -106,7 +106,7 @@ namespace gs.compiler {
 			if (src == null) {
 				_src = "null";
 			} else {
-				_src = src.ToString();
+				_src = src.ToString().ToLower();
 			}
 			_Parse();
 		}
