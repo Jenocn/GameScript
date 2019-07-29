@@ -184,7 +184,10 @@ namespace gs.compiler {
 				}
 				while (true) {
 					var highSignPos = calcSrc.IndexOfAny(highSign);
-					if (highSignPos <= 0) { break; }
+					if (highSignPos == -1) { break; }
+					if (highSignPos == 0) {
+						return false;
+					}
 					char tempSign = calcSrc[highSignPos];
 					var findOL = calcSrc.LastIndexOfAny(mathSign, highSignPos - 1);
 					int startPosOL = 0;
@@ -251,7 +254,16 @@ namespace gs.compiler {
 				}
 				while (true) {
 					var lowSignPos = calcSrc.IndexOfAny(lowSign);
-					if (lowSignPos <= 0) { break; }
+					if (lowSignPos == -1) { break; }
+					if (lowSignPos == 0) {
+						if (calcSrc[lowSignPos] == '-') {
+							lowSignPos = calcSrc.IndexOfAny(lowSign, lowSignPos + 1);
+							if (lowSignPos == -1) { break; }
+						} else {
+							return false;
+						}
+					}
+
 					char tempSign = calcSrc[lowSignPos];
 					var findOL = calcSrc.LastIndexOfAny(mathSign, lowSignPos - 1);
 					int startPosOL = 0;
