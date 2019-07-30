@@ -108,7 +108,7 @@ namespace gs.compiler {
 			if (src == null) {
 				_Parse("null");
 			} else {
-				_Parse(src.ToString().ToLower());
+				_Parse(src.ToString());
 			}
 		}
 
@@ -118,19 +118,31 @@ namespace gs.compiler {
 				Logger.Error("", "empty value!");
 				return;
 			}
-			if (tempSrc == "null") {
+			char checkCh = tempSrc[0];
+			if (checkCh == 'n' && tempSrc == "null") {
 				_type = ScriptValueType.Null;
 				return;
 			}
-			if (tempSrc == "true" || tempSrc == "false") {
-				_type = ScriptValueType.Bool;
-				_value = bool.Parse(tempSrc);
-				return;
+			if (checkCh == 't' || checkCh == 'T') {
+				if (tempSrc == "true" || tempSrc == "True") {
+					_type = ScriptValueType.Bool;
+					_value = bool.Parse(tempSrc);
+					return;
+				}
 			}
-			if (tempSrc.Length >= 2 && tempSrc[0] == Grammar.SS && tempSrc[tempSrc.Length - 1] == Grammar.SS) {
-				_type = ScriptValueType.String;
-				_value = tempSrc.Substring(1, tempSrc.Length - 2);
-				return;
+			if (checkCh == 'f' || checkCh == 'F') {
+				if (tempSrc == "false" || tempSrc == "False") {
+					_type = ScriptValueType.Bool;
+					_value = bool.Parse(tempSrc);
+					return;
+				}
+			}
+			if (checkCh == Grammar.SS) {
+				if (tempSrc.Length >= 2 && tempSrc[tempSrc.Length - 1] == Grammar.SS) {
+					_type = ScriptValueType.String;
+					_value = tempSrc.Substring(1, tempSrc.Length - 2);
+					return;
+				}
 			}
 			double tempDouble = 0;
 			if (double.TryParse(tempSrc, out tempDouble)) {
