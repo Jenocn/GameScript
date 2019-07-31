@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace gs.compiler {
 	public static class ScriptMethodCall {
 		public static bool Execute(string src, ScriptMethod space, out ScriptValue result) {
-			result = new ScriptValue();
+			result = ScriptValue.NULL;
 
 			var tempSrc = src.Trim();
 

@@ -9,7 +9,7 @@ namespace gs.compiler {
 	public static class ScriptExpression {
 
 		public static bool Execute(string src, ScriptMethod space, out ScriptValue result) {
-			result = new ScriptValue();
+			result = ScriptValue.NULL;
 
 			var tempSrc = src.Trim();
 
@@ -53,7 +53,7 @@ namespace gs.compiler {
 						return false;
 					}
 					bool bCondition = ScriptValue.Compare(leftValue, rightValue);
-					result = new ScriptValue(bCondition);
+					result = ScriptValue.Create(bCondition);
 					return true;
 				}
 
@@ -78,7 +78,7 @@ namespace gs.compiler {
 						return false;
 					}
 					bool bCondition = ScriptValue.LessEqual(leftValue, rightValue);
-					result = new ScriptValue(bCondition);
+					result = ScriptValue.Create(bCondition);
 					return true;
 				}
 
@@ -102,7 +102,7 @@ namespace gs.compiler {
 						return false;
 					}
 					bool bCondition = ScriptValue.MoreEqual(leftValue, rightValue);
-					result = new ScriptValue(bCondition);
+					result = ScriptValue.Create(bCondition);
 					return true;
 				}
 
@@ -126,7 +126,7 @@ namespace gs.compiler {
 						return false;
 					}
 					bool bCondition = ScriptValue.Less(leftValue, rightValue);
-					result = new ScriptValue(bCondition);
+					result = ScriptValue.Create(bCondition);
 					return true;
 				}
 
@@ -150,7 +150,7 @@ namespace gs.compiler {
 						return false;
 					}
 					bool bCondition = ScriptValue.More(leftValue, rightValue);
-					result = new ScriptValue(bCondition);
+					result = ScriptValue.Create(bCondition);
 					return true;
 				}
 			} while (false);
@@ -179,7 +179,7 @@ namespace gs.compiler {
 					if (bracketValue.GetValueType() != ScriptValueType.Number) {
 						return false;
 					}
-					calcSrc = calcSrc.Insert(rightBracket + 1, bracketValue.GetValue().ToString());
+					calcSrc = calcSrc.Insert(rightBracket + 1, bracketValue.ToString());
 					calcSrc = calcSrc.Remove(leftBracket, rightBracket - leftBracket + 1);
 				}
 				while (true) {
@@ -333,8 +333,10 @@ namespace gs.compiler {
 			} while (false);
 
 			// value
-			result = new ScriptValue(tempSrc);
-			return true;
+			if (ScriptValue.TryParse(tempSrc, out result)) {
+				return true;
+			}
+			return false;
 		}
 
 		private static double _Calc(double value1, double value2, char sign) {

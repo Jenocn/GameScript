@@ -4,13 +4,17 @@
 */
 
 namespace gs.compiler {
-	public sealed class ScriptObject {
+	public class ScriptObject {
 		private string _name = "";
-		private ScriptValue _value = new ScriptValue();
+		private ScriptValue _value = ScriptValue.NULL;
 
 		public ScriptObject(string name, ScriptValue value) {
 			_name = name;
-			_value = value;
+			SetValue(value);
+		}
+
+		public string GetName() {
+			return _name;
 		}
 
 		public ScriptValue GetValue() {
@@ -18,7 +22,11 @@ namespace gs.compiler {
 		}
 
 		public void SetValue(ScriptValue value) {
-			_value = value;
+			if (value == null) {
+				_value = ScriptValue.NULL;
+			} else {
+				_value = value;
+			}
 		}
 	}
 }

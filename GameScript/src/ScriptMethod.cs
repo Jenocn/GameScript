@@ -75,14 +75,14 @@ namespace gs.compiler {
 		public bool Execute(List<ScriptValue> args, out bool bMethodReturn, out ScriptValue methodReturnResult) {
 
 			bMethodReturn = false;
-			methodReturnResult = new ScriptValue();
+			methodReturnResult = ScriptValue.NULL;
 			_objects.Clear();
 
 			// args
 			if (args != null && args.Count > 0) {
 				for (int i = 0; i < _params.Count; ++i) {
 					string paramName = _params[i];
-					ScriptValue paramValue = new ScriptValue();
+					ScriptValue paramValue = ScriptValue.NULL;
 					if (i < args.Count) {
 						paramValue = args[i];
 					}
@@ -152,7 +152,7 @@ namespace gs.compiler {
 							continue;
 						}
 						var conditionExe = new ScriptMethod(srcNewBody, this);
-						ScriptValue conditionResult = new ScriptValue();
+						ScriptValue conditionResult = ScriptValue.NULL;
 						bool bConditionReturn = false;
 						if (!conditionExe.Execute(null, out bConditionReturn, out conditionResult)) {
 							Logger.Error(srcNewHeader);
@@ -197,7 +197,7 @@ namespace gs.compiler {
 				var returnPos = sentence.IndexOf(Grammar.RETURN);
 				if (returnPos == 0) {
 					bMethodReturn = true;
-					ScriptValue result = new ScriptValue();
+					ScriptValue result = ScriptValue.NULL;
 					var returnValueStr = sentence.Substring(Grammar.RETURN.Length).Trim();
 					var returnFpbPos = returnValueStr.IndexOf(Grammar.FPB);
 					if (returnFpbPos != -1) {
@@ -223,7 +223,7 @@ namespace gs.compiler {
 					var srcLeft = sentence.Substring(0, assignPos).Trim();
 					var srcRight = sentence.Substring(assignPos + 1).Trim();
 
-					ScriptValue result = new ScriptValue();
+					ScriptValue result = ScriptValue.NULL;
 					bool bMethodCallSuccess = false;
 					var rFcbPos = srcRight.IndexOf(Grammar.FPB);
 					if (rFcbPos != -1) {
@@ -268,7 +268,7 @@ namespace gs.compiler {
 
 				} else {
 					// method call
-					ScriptValue tempRet = new ScriptValue();
+					ScriptValue tempRet = ScriptValue.NULL;
 					if (!ScriptMethodCall.Execute(sentence, this, out tempRet)) {
 						Logger.Error(sentence);
 						continue;

@@ -14,16 +14,9 @@ namespace gs.compiler {
 		}
 
 		private static ScriptValue _std_print(List<ScriptValue> args) {
-			string message = "";
-			if (args != null && args.Count > 0) {
-				if (args[0] != null) {
-					var value = args[0].GetValue();
-					if (value != null) {
-						message = value.ToString();
-					}
-				}
+			if (args.Count > 0) {
+				Logger.Log(args[0].ToString());
 			}
-			Logger.Log(message);
 			return null;
 		}
 
@@ -42,9 +35,12 @@ namespace gs.compiler {
 		public static ScriptValue Execute(string name, List<ScriptValue> args) {
 			System.Func<List<ScriptValue>, ScriptValue> method = null;
 			if (_methods.TryGetValue(name, out method)) {
-				return method.Invoke(args);
+				var result = method.Invoke(args);
+				if (result != null) {
+					return result;
+				}
 			}
-			return null;
+			return ScriptValue.NULL;
 		}
 	}
 }
