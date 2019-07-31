@@ -31,7 +31,7 @@ GameScript是动态类型,但本质上会根据值来动态确定类型
 - `string`
 - `bool`
 
-## 代码 
+## 脚本代码 
 ```csharp
 // 定义一个变量,变量必须要赋初值
 var value1 = null;
@@ -89,38 +89,31 @@ SpaceMethod1() {
 }
 ```
 
-## 注册C#方法
-目前可以通过调用`gs.VM.RegisterMethod`来注册,需要使用到`gs.compiler.ScriptValue`这个类型,接下来准备将再封装一层,不再需要外部调用`gs.compiler`空间下的类,使得注册C#方法更加简单方便
+## C#中 
+
+### 注册C#方法 
+
 ```csharp
 /// <summary>
-/// 注册C#方法的方法 RegisterMethod
+/// 注册C#方法的方法 RegisterFunction
 /// </summary>
 /// <param name="name">方法名</param>
 /// <param name="func">回调</param>
-public static bool RegisterMethod(string name, System.Func<List<ScriptValue>, ScriptValue> func);
+/// <result>注册成功则返回true</result>
+public static bool RegisterFunction(string name, Func<List<VMValue>, VMValue> func);
 ```
 
 ```csharp
 // 在C#中
 // 例如注册一个求和方法 sum
-gs.VM.RegisterMethod("sum", (List<ScriptValue> param) => {
-    // 返回值为 ScriptValue 类型
-    var ret = new ScriptValue(0);
-    // 参数数组需要判空
-    if (param == null) { return ret; }
-    double value = 0;
-    // for循环所有参数,表示支持无限参数
-    foreach (var item in param) {
-        // 获取参数类型是否为Number类型
-        if (item.GetValueType() != ScriptValueType.Number) { continue; }
-        // 取值相加
-        var sv = (double)item.GetValue();
-        value += sv;
+gs.VM.RegisterFunction("sum", (List<gs.VMValue> tempArgs) => {
+    double ret = 0;
+    foreach (var num in tempArgs) {
+        if (num.IsNumber()) {
+            ret += num.GetNumber();
+        }
     }
-    // 设置结果
-    ret.SetValue(value);
-    // 返回
-    return ret;
+    return new gs.VMValue(ret);
 });
 ```
 
@@ -130,14 +123,20 @@ var value = sum(10, 20, 30);
 print(value);
 ```
 
-## 调用脚本 
+### 调用脚本 
 新建一个文本文件,例如 main.gs
 ```csharp
 // C#代码中
 // 读取脚本的全部内容
 var src = File.ReadAllText("main.gs");
-// Execute则执行整个脚本,返回值为整个脚本的return返回值,与方法类型
-// 整个脚本可以看做是一个无参的匿名方法
-gs.VM.Execute(src);
+// Load方法加载一个脚本,并返回此函数对象(一个脚本本身是一个函数)
+VMFunction gsFunc = gs.VM.Load(src);
+// 执行
+gsFunc.Execute();
 ```
 
+#### VMValue
+`VMValue`是一个兼容的值类型,提供了一系列方法便于对脚本值和C#值之间的操作,通过`new VMValue(object)`可以创建对象.
+
+#### VMFunction
+`VMFunction`表示一个脚本函数,提供在C#中对脚本中的函数调用,提供`GetFunction(name)`方法可以获取当前函数空间下的子函数
