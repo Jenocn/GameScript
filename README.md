@@ -18,13 +18,12 @@ GameScript是动态类型,但本质上会根据值来动态确定类型
 
 ## 代码 
 ```csharp
-// 定义一个变量
-var value1; // 没有赋值,默认为null
+// 定义一个变量,变量必须要赋初值
+var value1 = null;
 var value2 = 10;
 var value3 = "HelloWorld";
 var value4 = true;
 var value5 = false;
-var value6 = null;
 
 // 赋值
 value1 = 1234;
@@ -40,13 +39,15 @@ Method0() {
 	print("Hello World");
 }
 
-// 函数的调用 
-Method0(); // print "Hello World"
-
 // 带一个参数的函数
 Method1(message) {
 	print(message);
 }
+
+// 函数的调用 
+Method0(); // print "Hello World"
+Method1("Hello Method1");
+Method1(100 * 5);
 
 // 带返回值的函数
 // 如果不写return语句,则默认返回null
