@@ -141,27 +141,73 @@ namespace gs.compiler {
 					var ifPos = srcNewHeader.IndexOf(Grammar.IF);
 					if (ifPos == 0) {
 						// if
-						var _ifSrcList = new List<KeyValuePair<string, string>>();
-						_ifSrcList.Add(new KeyValuePair<string, string>(srcNewHeader, srcNewBody));
+						var ifSrcList = new List<KeyValuePair<string, string>>();
+						ifSrcList.Add(new KeyValuePair<string, string>(srcNewHeader, srcNewBody));
+
+						string srcElseBody = "";
 
 						// elseif
+						while (true) {
+							var elsePos = _srcBody.IndexOf(Grammar.ELSE, readPos); // else
+							if (elsePos == -1) { break; }
+							var tempSpaceSrc = _srcBody.Substring(readPos, elsePos - readPos).Trim();
+							if (!string.IsNullOrEmpty(tempSpaceSrc)) {
+								break;
+							}
+
+							var elseFcbPos = _srcBody.IndexOf(Grammar.FCB, readPos); // {
+							if (elseFcbPos == -1) {
+								Logger.Error(_srcBody);
+								return false;
+							}
+							var elseFcePos = tool.GrammarTool.ReadPairSignPos(_srcBody, elseFcbPos + 1, Grammar.FCB, Grammar.FCE);
+							if (elseFcePos == -1) {
+								Logger.Error(_srcBody);
+								return false;
+							}
+
+							var tempElseBody = _srcBody.Substring(elseFcbPos + 1, elseFcePos - elseFcbPos - 1);
+
+							readPos = elseFcePos + 1;
+
+							var tempSpaceHeaderSrc = _srcBody.Substring(elsePos + Grammar.ELSE.Length, elseFcbPos - elsePos - Grammar.ELSE.Length).Trim();
+							if (tempSpaceHeaderSrc.Length == 0) {
+								// else
+								srcElseBody = tempElseBody;
+								break;
+							} else {
+								// else if
+								var elseifPos = tempSpaceHeaderSrc.IndexOf(Grammar.IF);
+								if (elseifPos == -1) {
+									Logger.Error(_srcBody);
+									return false;
+								}
+								var elseifFpbPos = tempSpaceHeaderSrc.IndexOf(Grammar.FPB);
+								var elseifFpePos = tempSpaceHeaderSrc.IndexOf(Grammar.FPE);
+								if (elseifFpePos <= elseifFpbPos) {
+									Logger.Error(_srcBody);
+									return false;
+								}
+								ifSrcList.Add(new KeyValuePair<string, string>(tempSpaceHeaderSrc, tempElseBody));
+							}
+						}
 
 
 						bool bCondition = false;
-						foreach (var pair in _ifSrcList) {
+						foreach (var pair in ifSrcList) {
 							var ifHeader = pair.Key;
 							var ifBody = pair.Value;
 							if (!ScriptIf.Execute(ifHeader, this, out bCondition)) {
-								Logger.Error(srcNewHeader);
-								break;
+								Logger.Error(ifHeader);
+								return false;
 							}
 							if (bCondition) {
 								var conditionExe = new ScriptMethod(ifBody, this);
 								ScriptValue conditionResult = ScriptValue.NULL;
 								bool bConditionReturn = false;
 								if (!conditionExe.Execute(null, out bConditionReturn, out conditionResult)) {
-									Logger.Error(srcNewHeader);
-									continue;
+									Logger.Error(ifHeader);
+									return false;
 								}
 								if (bConditionReturn) {
 									methodReturnResult = conditionResult;
@@ -172,6 +218,18 @@ namespace gs.compiler {
 						}
 						if (!bCondition) {
 							// else
+							if (srcElseBody.Length == 0) { continue; }
+							var elseExe = new ScriptMethod(srcElseBody, this);
+							ScriptValue conditionResult = ScriptValue.NULL;
+							bool bConditionReturn = false;
+							if (!elseExe.Execute(null, out bConditionReturn, out conditionResult)) {
+								Logger.Error(srcElseBody);
+								return false;
+							}
+							if (bConditionReturn) {
+								methodReturnResult = conditionResult;
+								return true;
+							}
 						}
 						continue;
 					}
