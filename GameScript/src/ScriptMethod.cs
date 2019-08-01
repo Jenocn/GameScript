@@ -135,32 +135,43 @@ namespace gs.compiler {
 
 					var srcNewHeader = _srcBody.Substring(readPos, fcbPos - readPos).Trim();
 					var srcNewBody = _srcBody.Substring(fcbPos + 1, fcePos - fcbPos - 1);
+
 					readPos = fcePos + 1;
 
 					var ifPos = srcNewHeader.IndexOf(Grammar.IF);
 					if (ifPos == 0) {
 						// if
-						bool bCondition = false;
-						if (!ScriptIf.Execute(srcNewHeader, this, out bCondition)) {
-							Logger.Error(srcNewHeader);
-							continue;
-						}
+						var _ifSrcList = new List<KeyValuePair<string, string>>();
+						_ifSrcList.Add(new KeyValuePair<string, string>(srcNewHeader, srcNewBody));
 
+						// elseif
+
+
+						bool bCondition = false;
+						foreach (var pair in _ifSrcList) {
+							var ifHeader = pair.Key;
+							var ifBody = pair.Value;
+							if (!ScriptIf.Execute(ifHeader, this, out bCondition)) {
+								Logger.Error(srcNewHeader);
+								break;
+							}
+							if (bCondition) {
+								var conditionExe = new ScriptMethod(ifBody, this);
+								ScriptValue conditionResult = ScriptValue.NULL;
+								bool bConditionReturn = false;
+								if (!conditionExe.Execute(null, out bConditionReturn, out conditionResult)) {
+									Logger.Error(srcNewHeader);
+									continue;
+								}
+								if (bConditionReturn) {
+									methodReturnResult = conditionResult;
+									return true;
+								}
+								break;
+							}
+						}
 						if (!bCondition) {
 							// else
-							// todo...
-							continue;
-						}
-						var conditionExe = new ScriptMethod(srcNewBody, this);
-						ScriptValue conditionResult = ScriptValue.NULL;
-						bool bConditionReturn = false;
-						if (!conditionExe.Execute(null, out bConditionReturn, out conditionResult)) {
-							Logger.Error(srcNewHeader);
-							continue;
-						}
-						if (bConditionReturn) {
-							methodReturnResult = conditionResult;
-							return true;
 						}
 						continue;
 					}
