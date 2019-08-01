@@ -36,5 +36,29 @@ namespace gs.compiler.tool {
 			}
 			return count;
 		}
+
+		public static string CutComments(string src) {
+			if (string.IsNullOrEmpty(src)) { return src; }
+			int pos = 0;
+			string ret = "";
+
+			while (true) {
+				if (pos >= src.Length) { break; }
+				var commentPos = src.IndexOf(Grammar.COMMENT, pos);
+				if (commentPos != -1) {
+					ret += src.Substring(pos, commentPos - pos);
+
+					var rnPos = src.IndexOf('\n', commentPos + Grammar.COMMENT.Length);
+					if (rnPos == -1) {
+						rnPos = src.Length - 1;
+					}
+					pos = rnPos + 1;
+				} else {
+					ret += src.Substring(pos);
+					break;
+				}
+			}
+			return ret;
+		}
 	}
 }

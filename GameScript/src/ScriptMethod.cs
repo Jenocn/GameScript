@@ -17,18 +17,18 @@ namespace gs.compiler {
 		private Dictionary<string, ScriptObject> _objects = new Dictionary<string, ScriptObject>();
 
 		public ScriptMethod(string srcHeader, string srcBody, ScriptMethod parent = null) {
-			_srcBody = srcBody.Trim();
+			_srcBody = tool.GrammarTool.CutComments(srcBody).Trim();
 			_parent = parent;
 			_ParseHeader(srcHeader);
 		}
 
 		public ScriptMethod(string srcBody, ScriptMethod parent = null) {
-			_srcBody = srcBody.Trim();
+			_srcBody = tool.GrammarTool.CutComments(srcBody).Trim();
 			_parent = parent;
 		}
 
 		public void Parse(string srcBody) {
-			_srcBody = srcBody;
+			_srcBody = tool.GrammarTool.CutComments(srcBody);
 		}
 
 		private void _ParseHeader(string srcHeader) {
