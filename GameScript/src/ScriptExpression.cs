@@ -13,6 +13,11 @@ namespace gs.compiler {
 
 			var tempSrc = src.Trim();
 
+			// value
+			if (ScriptValue.TryParse(tempSrc, out result)) {
+				return true;
+			}
+
 			// check validity
 			var fpbPos = tempSrc.IndexOf(Grammar.FPB);
 			var fpePos = tool.GrammarTool.ReadPairSignPos(tempSrc, fpbPos + 1, Grammar.FPB, Grammar.FPE);
@@ -329,13 +334,11 @@ namespace gs.compiler {
 					calcSrc = calcSrc.Insert(endPosOR, valueResult.ToString());
 					calcSrc = calcSrc.Remove(startPosOL, endPosOR - startPosOL);
 				}
-				tempSrc = calcSrc;
+				if (!Execute(calcSrc, space, out result)) {
+					return false;
+				}
 			} while (false);
 
-			// value
-			if (ScriptValue.TryParse(tempSrc, out result)) {
-				return true;
-			}
 			return false;
 		}
 

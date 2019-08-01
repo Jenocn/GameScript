@@ -88,7 +88,6 @@ namespace gs.compiler {
 					}
 					_objects.Add(paramName, new ScriptObject(paramName, paramValue));
 				}
-
 			}
 
 			int readPos = 0;
@@ -99,34 +98,13 @@ namespace gs.compiler {
 
 				var overPos = _srcBody.IndexOf(Grammar.OVER, readPos);
 				var fcbPos = _srcBody.IndexOf(Grammar.FCB, readPos);
-				var commentPos = _srcBody.IndexOf(Grammar.COMMENT, readPos);
 				if (overPos == -1 && fcbPos == -1) {
-					if (commentPos != -1) {
-						var tailPos = _srcBody.IndexOf('\n', commentPos);
-						if (tailPos == -1) {
-							tailPos = _srcBody.Length;
-						}
-						readPos = tailPos + 1;
-						continue;
-					}
 					Logger.Error(_srcBody);
 					return false;
 				}
 
 				// function, if
 				if ((fcbPos != -1 && fcbPos < overPos) || overPos == -1) {
-
-					if (commentPos != -1) {
-						if (commentPos < fcbPos) {
-							var tailPos = _srcBody.IndexOf('\n', commentPos);
-							if (tailPos == -1) {
-								tailPos = _srcBody.Length;
-							}
-							readPos = tailPos + 1;
-							continue;
-						}
-					}
-
 					var fcePos = tool.GrammarTool.ReadPairSignPos(_srcBody, fcbPos + 1, Grammar.FCB, Grammar.FCE);
 					if (fcePos == -1) {
 						Logger.Error(_srcBody);
@@ -248,18 +226,17 @@ namespace gs.compiler {
 				}
 
 				// sentence
-				if (commentPos != -1) {
-					if (commentPos < overPos) {
-						var tailPos = _srcBody.IndexOf('\n', commentPos);
-						if (tailPos == -1) {
-							tailPos = _srcBody.Length;
-						}
-						readPos = tailPos + 1;
-						continue;
-					}
-				}
-
 				var sentence = _srcBody.Substring(readPos, overPos - readPos).Trim();
+				while (true) {
+					int ssCount = tool.GrammarTool.CountSign(sentence, Grammar.SS);
+					if (ssCount % 2 == 0) { break; }
+					overPos = _srcBody.IndexOf(Grammar.OVER, overPos + 1);
+					if (overPos == -1) {
+						Logger.Error(_srcBody);
+						return false;
+					}
+					sentence = _srcBody.Substring(readPos, overPos - readPos).Trim();
+				}
 				readPos = overPos + 1;
 
 				// return

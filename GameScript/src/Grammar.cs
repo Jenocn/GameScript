@@ -34,6 +34,9 @@ namespace gs.compiler {
 		public static readonly string IF = "if";
 		public static readonly string ELSE = "else";
 
+		// for sign
+		public static readonly string FOR = "for";
+
 		// compare
 		public static readonly string COMPARE_EQUIP = "==";
 		public static readonly string COMPARE_LESS = "<";
