@@ -1,14 +1,41 @@
-func() {
-	var num = 2;
-	if (num == 1) {
-		print("a");
-		return null;
-	} else if (num == 2) {
-		print("b");
-		return null;
-	}
+var value1 = null;
+var value2 = 10;
+var value3 = "HelloWorld";
+var value4 = true;
+var value5 = false;
 
-	print("c");
+value1 = 1234;
+value1 = "string";
+
+var num1 = 100 * (5 + 3);
+var num2 = num1 / 100;
+
+Method0() {
+    print("Hello World");
 }
 
-func();
+Method1(message) {
+    print(message);
+}
+
+Method0();
+Method1("Hello Method1");
+Method1(100 * 5);
+
+Method2() {
+    return 0;
+}
+
+Max(a, b) {
+    if (a >= b) {
+        return a;
+    }
+    return b;
+}
+
+SpaceMethod1() {
+    SpaceMethod2() {
+        SpaceMethod3() {
+        }
+    }
+}

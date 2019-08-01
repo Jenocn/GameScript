@@ -337,6 +337,7 @@ namespace gs.compiler {
 				if (!Execute(calcSrc, space, out result)) {
 					return false;
 				}
+				return true;
 			} while (false);
 
 			return false;
