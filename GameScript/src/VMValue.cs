@@ -50,6 +50,12 @@ namespace gs {
 			}
 			return 0;
 		}
+		public int GetInt() {
+			return (int)GetNumber();
+		}
+		public float GetFloat() {
+			return (float)GetNumber();
+		}
 		public string GetString() {
 			if (_scriptValue.GetValueType() == ScriptValueType.String) {
 				return (string)_scriptValue.GetValue();
