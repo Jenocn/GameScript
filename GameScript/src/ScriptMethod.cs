@@ -15,20 +15,46 @@ namespace gs.compiler {
 		private ScriptMethod _parent = null;
 		private Dictionary<string, ScriptMethod> _methods = new Dictionary<string, ScriptMethod>();
 		private Dictionary<string, ScriptObject> _objects = new Dictionary<string, ScriptObject>();
+		private Dictionary<string, ScriptObject> _strings = new Dictionary<string, ScriptObject>();
 
 		public ScriptMethod(string srcHeader, string srcBody, ScriptMethod parent = null) {
-			_srcBody = tool.GrammarTool.CutComments(srcBody).Trim();
+			_srcBody = srcBody;
 			_parent = parent;
 			_ParseHeader(srcHeader);
+			_ParseSrcbody();
 		}
 
 		public ScriptMethod(string srcBody, ScriptMethod parent = null) {
-			_srcBody = tool.GrammarTool.CutComments(srcBody).Trim();
+			_srcBody = srcBody;
 			_parent = parent;
+			_ParseSrcbody();
 		}
 
-		public void Parse(string srcBody) {
-			_srcBody = tool.GrammarTool.CutComments(srcBody);
+		private void _ParseSrcbody() {
+			_srcBody = tool.GrammarTool.CutComments(_srcBody).Trim();
+			bool bSS = false;
+			int ssBP = 0;
+			int previousPos = 0;
+			string newStr = "";
+			for (int i = 0; i < _srcBody.Length; ++i) {
+				char ch = _srcBody[i];
+				if (ch != Grammar.SS) { continue; }
+				bSS = !bSS;
+				if (bSS) {
+					ssBP = i;
+				} else {
+					var str = _srcBody.Substring(ssBP, i - ssBP + 1);
+					var name = "##_" + _strings.Count + "_##";
+					_strings.Add(name, new ScriptObject(name, ScriptValue.Create(str)));
+					newStr += _srcBody.Substring(previousPos, ssBP - previousPos);
+					newStr += name;
+					previousPos = i + 1;
+				}
+			}
+			if (previousPos < _srcBody.Length) {
+				newStr += _srcBody.Substring(previousPos);
+			}
+			_srcBody = newStr;
 		}
 
 		private void _ParseHeader(string srcHeader) {
@@ -292,8 +318,7 @@ namespace gs.compiler {
 							Logger.Error(sentence);
 							continue;
 						}
-						var obj = FindObject(leftName);
-						if (obj != null) {
+						if (FindObject(leftName) != null) {
 							Logger.Error(sentence, leftName + " is exists!");
 							continue;
 						}
@@ -337,8 +362,10 @@ namespace gs.compiler {
 		public ScriptObject FindObject(string name) {
 			ScriptObject ret = null;
 			if (!_objects.TryGetValue(name, out ret)) {
-				if (_parent != null) {
-					return _parent.FindObject(name);
+				if (!_strings.TryGetValue(name, out ret)) {
+					if (_parent != null) {
+						return _parent.FindObject(name);
+					}
 				}
 			}
 			return ret;
