@@ -129,7 +129,7 @@ namespace gs.compiler {
 					return false;
 				}
 
-				// function, if
+				// function, if, while
 				if ((fcbPos != -1 && fcbPos < overPos) || overPos == -1) {
 					var fcePos = tool.GrammarTool.ReadPairSignPos(_srcBody, fcbPos + 1, Grammar.FCB, Grammar.FCE);
 					if (fcePos == -1) {
@@ -228,6 +228,34 @@ namespace gs.compiler {
 							bool bConditionReturn = false;
 							if (!elseExe.Execute(null, out bConditionReturn, out conditionResult)) {
 								Logger.Error(srcElseBody);
+								return false;
+							}
+							if (bConditionReturn) {
+								methodReturnResult = conditionResult;
+								return true;
+							}
+						}
+						continue;
+					}
+
+					// while
+					var whilePos = srcNewHeader.IndexOf(Grammar.WHILE);
+					if (whilePos == 0) {
+						var whileHeader = srcNewHeader.Replace(Grammar.WHILE, Grammar.IF);
+						while (true) {
+							bool bCondition = false;
+							if (!ScriptIf.Execute(whileHeader, this, out bCondition)) {
+								Logger.Error(srcNewHeader);
+								return false;
+							}
+							if (!bCondition) {
+								break;
+							}
+							var conditionExe = new ScriptMethod(srcNewBody, this);
+							ScriptValue conditionResult = ScriptValue.NULL;
+							bool bConditionReturn = false;
+							if (!conditionExe.Execute(null, out bConditionReturn, out conditionResult)) {
+								Logger.Error(srcNewHeader);
 								return false;
 							}
 							if (bConditionReturn) {

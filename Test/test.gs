@@ -13,6 +13,22 @@ value1 = "string";
 var num1 = 100 * (5 + 3);
 var num2 = num1 / 100;
 
+// 条件语句
+if (num2 > 1000) {
+	print("1000");
+} else if (num2 > 100) {
+	print("100");
+} else {
+	print("no");
+}
+
+// 循环语句
+var x = 3;
+while(x > 0) {
+	print(x);
+	x = x - 1;
+}
+
 // 定义一个无参的函数
 Method0() {
     // print为内置方法

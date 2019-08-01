@@ -36,6 +36,8 @@ namespace gs.compiler {
 
 		// for sign
 		public static readonly string FOR = "for";
+		// while sign
+		public static readonly string WHILE = "while";
 
 		// compare
 		public static readonly string COMPARE_EQUIP = "==";
