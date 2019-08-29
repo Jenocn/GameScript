@@ -10,8 +10,8 @@ using gs.compiler;
 namespace gs {
 	public static class VM {
 
-		public static VMFunction Load(string src) {
-			return new VMFunction(new ScriptMethod(src));
+		public static VMFunction Load(string src, VMFunction parent = null) {
+			return new VMFunction(src, parent);
 		}
 
 		public static bool RegisterFunction(string name, Func<List<VMValue>, VMValue> func) {

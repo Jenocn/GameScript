@@ -11,6 +11,13 @@ namespace gs {
 	public class VMFunction {
 		private ScriptMethod _scriptMethod = null;
 
+		public VMFunction(string src, VMFunction parent = null) {
+			if (parent != null) {
+				_scriptMethod = new ScriptMethod(src, parent._scriptMethod);
+			} else {
+				_scriptMethod = new ScriptMethod(src);
+			}
+		}
 		public VMFunction(ScriptMethod method) {
 			_scriptMethod = method;
 		}
