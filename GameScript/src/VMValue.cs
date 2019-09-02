@@ -21,6 +21,9 @@ namespace gs {
 		}
 
 		public void SetValue(object value) {
+            if (value is string) {
+                value = "\"" + value + "\"";
+            }
 			_scriptValue = ScriptValue.Create(value);
 		}
 
