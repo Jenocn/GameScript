@@ -24,6 +24,10 @@ namespace gs.compiler {
 		// function param split
 		public static readonly char FPS = ',';
 
+		// object name array sign
+		public static readonly char ARRB = '[';
+		public static readonly char ARRE = ']';
+
 		// string sign
 		public static readonly char SS = '\"';
 

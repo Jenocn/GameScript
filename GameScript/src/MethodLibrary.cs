@@ -11,11 +11,19 @@ namespace gs.compiler {
 
 		static MethodLibrary() {
 			_methods.Add("print", _std_print);
+			_methods.Add("strlen", _std_strlen);
 		}
 
 		private static ScriptValue _std_print(List<ScriptValue> args) {
 			if (args.Count > 0) {
 				Logger.Log(args[0].ToString());
+			}
+			return null;
+		}
+
+		private static ScriptValue _std_strlen(List<ScriptValue> args) {
+			if (args.Count > 0) {
+				return ScriptValue.Create(args[0].ToString().Length);
 			}
 			return null;
 		}

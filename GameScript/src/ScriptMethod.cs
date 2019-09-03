@@ -388,6 +388,7 @@ namespace gs.compiler {
 		}
 
 		public ScriptObject FindObject(string name) {
+			name = _ConvertObjectName(name);
 			ScriptObject ret = null;
 			if (!_objects.TryGetValue(name, out ret)) {
 				if (!_strings.TryGetValue(name, out ret)) {
@@ -397,6 +398,19 @@ namespace gs.compiler {
 				}
 			}
 			return ret;
+		}
+
+		private string _ConvertObjectName(string name) {
+			var arrb = name.IndexOf(Grammar.ARRB);
+			if (arrb == -1) { return name; }
+			var arre = gs.compiler.tool.GrammarTool.ReadPairSignPos(name, arrb + 1, Grammar.ARRB, Grammar.ARRE);
+			if (arre == -1) { return name; }
+			var sign = name.Substring(arrb + 1, arre - arrb - 1);
+			var findObj = FindObject(sign.Trim());
+			if (findObj == null) {
+				return name;
+			}
+            return name.Replace(sign, findObj.GetValue().ToString());
 		}
 	}
 }
