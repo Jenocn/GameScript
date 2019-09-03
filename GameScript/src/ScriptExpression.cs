@@ -1,7 +1,7 @@
 ﻿/*
  * By Jenocn
  * https://jenocn.github.io/
-*/
+ */
 
 using System;
 
@@ -61,7 +61,6 @@ namespace gs.compiler {
 					result = ScriptValue.Create(bCondition);
 					return true;
 				}
-
 
 				comparePos = srcCondition.IndexOf(Grammar.COMPARE_LESS_EQUAL);
 				if (comparePos != -1) {
@@ -163,7 +162,7 @@ namespace gs.compiler {
 			// math expression
 			do {
 				var calcSrc = tempSrc;
-				var mathSign = new char[] {'+', '-', '*', '/', '(', ')', '%' };
+				var mathSign = new char[] { '+', '-', '*', '/', '(', ')', '%' };
 				var highSign = new char[] { '*', '/', '%' };
 				var lowSign = new char[] { '+', '-' };
 				if (calcSrc.IndexOfAny(mathSign) == -1) {
@@ -253,7 +252,7 @@ namespace gs.compiler {
 					if (valueOR.GetValueType() != ScriptValueType.Number) {
 						return false;
 					}
-					var valueResult = _Calc((double)valueOL.GetValue(), (double)valueOR.GetValue(), tempSign);
+					var valueResult = _Calc((double) valueOL.GetValue(), (double) valueOR.GetValue(), tempSign);
 					calcSrc = calcSrc.Insert(endPosOR, valueResult.ToString());
 					calcSrc = calcSrc.Remove(startPosOL, endPosOR - startPosOL);
 				}
@@ -298,9 +297,6 @@ namespace gs.compiler {
 					if (!Execute(srcOL, space, out valueOL)) {
 						return false;
 					}
-					if (valueOL.GetValueType() != ScriptValueType.Number) {
-						return false;
-					}
 
 					var findOR = calcSrc.IndexOfAny(mathSign, lowSignPos + 1);
 					string srcOR = "";
@@ -327,10 +323,22 @@ namespace gs.compiler {
 					if (!Execute(srcOR, space, out valueOR)) {
 						return false;
 					}
-					if (valueOR.GetValueType() != ScriptValueType.Number) {
-						return false;
-					}
-					var valueResult = _Calc((double)valueOL.GetValue(), (double)valueOR.GetValue(), tempSign);
+					object valueResult = null;
+					do {
+						if (tempSign == '+') {
+							if ((valueOL.GetValueType() == ScriptValueType.String) || (valueOR.GetValueType() == ScriptValueType.String)) {
+								valueResult = "\"" + valueOL.ToString() + valueOR.ToString() + "\"";
+								break;
+							}
+						}
+						if (valueOL.GetValueType() != ScriptValueType.Number) {
+							return false;
+						}
+						if (valueOR.GetValueType() != ScriptValueType.Number) {
+							return false;
+						}
+						valueResult = _Calc((double) valueOL.GetValue(), (double) valueOR.GetValue(), tempSign);
+					} while (false);
 					calcSrc = calcSrc.Insert(endPosOR, valueResult.ToString());
 					calcSrc = calcSrc.Remove(startPosOL, endPosOR - startPosOL);
 				}
@@ -344,7 +352,7 @@ namespace gs.compiler {
 		}
 
 		private static double _Calc(double value1, double value2, char sign) {
-			if(sign == '+') {
+			if (sign == '+') {
 				return value1 + value2;
 			}
 			if (sign == '-') {
