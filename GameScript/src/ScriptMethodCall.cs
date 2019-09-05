@@ -24,7 +24,7 @@ namespace gs.compiler {
 
 			var methodName = tempSrc.Substring(0, fpbPos).Trim();
 			var findMethod = space.FindMethod(methodName);
-			bool bMethod = (findMethod != null) || MethodLibrary.Container(methodName);
+			bool bMethod = (findMethod != null) || MethodLibrary.Contains(methodName);
 			if (!bMethod) {
 				return false;
 			}

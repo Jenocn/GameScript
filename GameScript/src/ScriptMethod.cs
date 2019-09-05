@@ -1,7 +1,7 @@
 ﻿/*
  * By Jenocn
  * https://jenocn.github.io/
-*/
+ */
 
 using System.Collections.Generic;
 
@@ -16,6 +16,12 @@ namespace gs.compiler {
 		private Dictionary<string, ScriptMethod> _methods = new Dictionary<string, ScriptMethod>();
 		private Dictionary<string, ScriptObject> _objects = new Dictionary<string, ScriptObject>();
 		private Dictionary<string, ScriptObject> _strings = new Dictionary<string, ScriptObject>();
+		private System.Func<List<ScriptValue>, ScriptValue> _func = null;
+		private MethodPool _methodPool = new MethodPool();
+
+		public ScriptMethod(System.Func<List<ScriptValue>, ScriptValue> func) {
+			_func = func;
+		}
 
 		public ScriptMethod(string srcHeader, string srcBody, ScriptMethod parent = null) {
 			_srcBody = srcBody;
@@ -103,6 +109,11 @@ namespace gs.compiler {
 			bMethodReturn = false;
 			methodReturnResult = ScriptValue.NULL;
 			_objects.Clear();
+
+			if (_func != null) {
+				methodReturnResult = _func(args);
+				return true;
+			}
 
 			// args
 			if (args != null && args.Count > 0) {
@@ -195,7 +206,6 @@ namespace gs.compiler {
 								ifSrcList.Add(new KeyValuePair<string, string>(tempSpaceHeaderSrc, tempElseBody));
 							}
 						}
-
 
 						bool bCondition = false;
 						foreach (var pair in ifSrcList) {
@@ -377,14 +387,27 @@ namespace gs.compiler {
 			return true;
 		}
 
+		public bool RegisterMethod(string name, System.Func<List<ScriptValue>, ScriptValue> func) {
+			bool bRet = _methodPool.AddMethod(name, func);
+			if (!bRet) {
+				Logger.Error(string.Format("The method named \"{0}\" is exists!", name));
+			}
+			return bRet;
+		}
+
 		public ScriptMethod FindMethod(string name) {
 			ScriptMethod ret = null;
-			if (!_methods.TryGetValue(name, out ret)) {
-				if (_parent != null) {
-					return _parent.FindMethod(name);
-				}
+			if (_methods.TryGetValue(name, out ret)) {
+				return ret;
 			}
-			return ret;
+			ret = _methodPool.GetMethod(name);
+			if (ret != null) {
+				return ret;
+			}
+			if (_parent != null) {
+				return _parent.FindMethod(name);
+			}
+			return null;
 		}
 
 		public ScriptObject FindObject(string name) {
@@ -410,7 +433,7 @@ namespace gs.compiler {
 			if (findObj == null) {
 				return name;
 			}
-            return name.Replace(sign, findObj.GetValue().ToString());
+			return name.Replace(sign, findObj.GetValue().ToString());
 		}
 	}
 }
