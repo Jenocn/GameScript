@@ -102,7 +102,7 @@ namespace gs.compiler {
 			case ScriptValueType.Null:
 				return true;
 			case ScriptValueType.Number:
-				return (double)a.GetValue() == (double)b.GetValue();
+				return System.Math.Abs((double)a.GetValue() - (double)b.GetValue()) < double.Epsilon;
 			case ScriptValueType.String:
 				return (string)a.GetValue() == (string)b.GetValue();
 			case ScriptValueType.Bool:
