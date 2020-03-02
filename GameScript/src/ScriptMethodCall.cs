@@ -1,7 +1,7 @@
 ﻿/*
  * By Jenocn
  * https://jenocn.github.io/
-*/
+ */
 
 using System.Collections.Generic;
 
@@ -31,14 +31,16 @@ namespace gs.compiler {
 			var scriptParams = new List<ScriptValue>();
 			var srcArgs = tempSrc.Substring(fpbPos + 1, fpePos - fpbPos - 1).Trim();
 			if (!string.IsNullOrEmpty(srcArgs)) {
-				var argArr = srcArgs.Split(Grammar.FPS);
-				for (int i = 0; i < argArr.Length; ++i) {
+				var argArr = tool.GrammarTool.SplitParams(srcArgs);
+				for (int i = 0; i < argArr.Count; ++i) {
 					var argStr = argArr[i].Trim();
 					if (string.IsNullOrEmpty(argStr)) {
 						return false;
 					}
-					if (!ScriptExpression.Execute(argStr, space, out result)) {
-						return false;
+					if (!Execute(argStr, space, out result)) {
+						if (!ScriptExpression.Execute(argStr, space, out result)) {
+							return false;
+						}
 					}
 					scriptParams.Add(result);
 				}

@@ -1,10 +1,50 @@
 ﻿/*
  * By Jenocn
  * https://jenocn.github.io/
-*/
+ */
+
+using System.Collections.Generic;
 
 namespace gs.compiler.tool {
 	public static class GrammarTool {
+
+		public static List<string> SplitParams(string src) {
+			var ret = new List<string>();
+			if (string.IsNullOrEmpty(src)) {
+				return ret;
+			}
+			var index = 0;
+			var length = src.Length;
+			while (index != length) {
+				var startPos = index;
+				index = length;
+
+				// find param
+				var fpsPos = src.IndexOf(Grammar.FPS, startPos);
+				if (fpsPos != -1) {
+					index = fpsPos + 1;
+				}
+
+				// find method
+				var fpbPos = src.IndexOf(Grammar.FPB, startPos);
+				if (fpbPos != -1 && fpbPos < fpsPos) {
+					var fpePos = ReadPairSignPos(src, fpbPos + 1, '(', ')');
+					if (fpePos > fpsPos) {
+						index = fpePos + 1;
+						var methodEnd = src.IndexOf(Grammar.FPS, index);
+						if (methodEnd != -1) {
+							index = methodEnd + 1;
+						}
+					}
+				}
+
+				var argStr = src.Substring(startPos, index - startPos).Trim();
+				ret.Add(argStr);
+			}
+
+			return ret;
+		}
+
 		public static int ReadPairSignPos(string src, int start, char left, char right, bool ignoreSS = true) {
 			if (start >= src.Length) { return -1; }
 			int count = 0;

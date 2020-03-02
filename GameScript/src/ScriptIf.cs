@@ -1,7 +1,7 @@
 ﻿/*
  * By Jenocn
  * https://jenocn.github.io/
-*/
+ */
 
 namespace gs.compiler {
 	public static class ScriptIf {
@@ -32,15 +32,17 @@ namespace gs.compiler {
 			}
 
 			ScriptValue tempValue = null;
-			if (!ScriptExpression.Execute(srcCondition, space, out tempValue)) {
-				Logger.Error(tempSrc);
-				return false;
+			if (!ScriptMethodCall.Execute(srcCondition, space, out tempValue)) {
+				if (!ScriptExpression.Execute(srcCondition, space, out tempValue)) {
+					Logger.Error(tempSrc);
+					return false;
+				}
 			}
 			if (tempValue.GetValueType() != ScriptValueType.Bool) {
 				Logger.Error(tempSrc);
 				return false;
 			}
-			result = (bool)tempValue.GetValue();
+			result = (bool) tempValue.GetValue();
 			return true;
 		}
 	}
