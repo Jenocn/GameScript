@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameScript", "GameScript\Ga
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", "{EEE18DAF-83E7-48F6-9A4D-099E6BB6F7DE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameScriptConsole", "GameScriptConsole\GameScriptConsole.csproj", "{BC709564-32A0-4A8C-A873-F679E438FE45}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{EEE18DAF-83E7-48F6-9A4D-099E6BB6F7DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEE18DAF-83E7-48F6-9A4D-099E6BB6F7DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEE18DAF-83E7-48F6-9A4D-099E6BB6F7DE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BC709564-32A0-4A8C-A873-F679E438FE45}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC709564-32A0-4A8C-A873-F679E438FE45}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC709564-32A0-4A8C-A873-F679E438FE45}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC709564-32A0-4A8C-A873-F679E438FE45}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

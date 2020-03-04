@@ -327,8 +327,20 @@ namespace gs.compiler {
 					return true;
 				}
 
-				var assignPos = sentence.IndexOf(Grammar.ASSIGN);
-				if (assignPos != -1) {
+				bool bAssign = false;
+				do {
+					var assignPos = sentence.IndexOf(Grammar.ASSIGN);
+					if (assignPos == -1) { break; }
+					if (sentence.IndexOf(Grammar.COMPARE_EQUIP) == assignPos) {
+						break;
+					}
+					if (sentence.IndexOf(Grammar.COMPARE_LESS_EQUAL) == assignPos - 1) {
+						break;
+					}
+					if (sentence.IndexOf(Grammar.COMPARE_MORE_EQUAL) == assignPos - 1) {
+						break;
+					}
+
 					// assign sentence
 					var srcLeft = sentence.Substring(0, assignPos).Trim();
 					var srcRight = sentence.Substring(assignPos + 1).Trim();
@@ -344,7 +356,7 @@ namespace gs.compiler {
 						// expression
 						if (!ScriptExpression.Execute(srcRight, this, out result)) {
 							Logger.Error(sentence);
-							continue;
+							return false;
 						}
 					}
 
@@ -354,33 +366,35 @@ namespace gs.compiler {
 						var leftName = srcLeft.Substring(varBeginPos + Grammar.VAR.Length).Trim();
 						if (leftName.IndexOfAny(Grammar.SPECIAL_CHAR) != -1) {
 							Logger.Error(sentence);
-							continue;
+							return false;
 						}
 						if (FindObject(leftName) != null) {
 							Logger.Error(sentence, leftName + " is exists!");
-							continue;
+							return false;
 						}
 						_objects.Add(leftName, new ScriptObject(leftName, result));
 					} else {
 						var leftName = srcLeft.Trim();
 						if (leftName.IndexOfAny(Grammar.SPECIAL_CHAR) != -1) {
 							Logger.Error(sentence);
-							continue;
+							return false;
 						}
 						var obj = FindObject(leftName);
 						if (obj == null) {
 							Logger.Error(sentence);
-							continue;
+							return false;
 						}
 						obj.SetValue(result);
 					}
+					bAssign = true;
+				} while (false);
 
-				} else {
+				if (!bAssign) {
 					// method call
 					ScriptValue tempRet = ScriptValue.NULL;
 					if (!ScriptMethodCall.Execute(sentence, this, out tempRet)) {
 						Logger.Error(sentence);
-						continue;
+						return false;
 					}
 				}
 			}
