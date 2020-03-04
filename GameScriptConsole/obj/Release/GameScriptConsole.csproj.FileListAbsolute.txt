@@ -1,6 +1,0 @@
-/Users/jenocn/Project/GameScript/GameScriptConsole/bin/Release/GameScriptConsole.exe
-/Users/jenocn/Project/GameScript/GameScriptConsole/bin/Release/GameScript.dll
-/Users/jenocn/Project/GameScript/GameScriptConsole/bin/Release/GameScript.pdb
-/Users/jenocn/Project/GameScript/GameScriptConsole/obj/Release/GameScriptConsole.csprojAssemblyReference.cache
-/Users/jenocn/Project/GameScript/GameScriptConsole/obj/Release/GameScriptConsole.csproj.CopyComplete
-/Users/jenocn/Project/GameScript/GameScriptConsole/obj/Release/GameScriptConsole.exe
