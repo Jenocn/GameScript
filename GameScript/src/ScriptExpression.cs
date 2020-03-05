@@ -38,125 +38,39 @@ namespace gs.compiler {
 			// logic expression
 			do {
 				var srcCondition = tempSrc;
-				var comparePos = srcCondition.IndexOf(Grammar.COMPARE_EQUIP);
-				if (comparePos != -1) {
-					var left = srcCondition.Substring(0, comparePos).Trim();
-					var right = srcCondition.Substring(comparePos + Grammar.COMPARE_EQUIP.Length, srcCondition.Length - comparePos - Grammar.COMPARE_EQUIP.Length).Trim();
-					if (string.IsNullOrEmpty(left) || string.IsNullOrEmpty(right)) {
-						return false;
-					}
 
-					ScriptValue leftValue = null;
-					ScriptValue rightValue = null;
-					if (!Execute(left, space, out leftValue)) {
-						return false;
+				int comparePos = -1;
+				string compareSign = "";
+				foreach (var tempCmpSign in Grammar.COMPARE_SIGNS) {
+					comparePos = srcCondition.IndexOf(tempCmpSign);
+					if (comparePos != -1) {
+						compareSign = tempCmpSign;
+						break;
 					}
-					if (!Execute(right, space, out rightValue)) {
-						return false;
-					}
-					if (leftValue.GetValueType() != rightValue.GetValueType()) {
-						return false;
-					}
-					bool bCondition = ScriptValue.Compare(leftValue, rightValue);
-					result = ScriptValue.Create(bCondition);
-					return true;
 				}
 
-				comparePos = srcCondition.IndexOf(Grammar.COMPARE_LESS_EQUAL);
-				if (comparePos != -1) {
-					var left = srcCondition.Substring(0, comparePos).Trim();
-					var right = srcCondition.Substring(comparePos + Grammar.COMPARE_EQUIP.Length, srcCondition.Length - comparePos - Grammar.COMPARE_EQUIP.Length).Trim();
-					if (string.IsNullOrEmpty(left) || string.IsNullOrEmpty(right)) {
-						return false;
-					}
+				if (comparePos == -1) { break; }
 
-					ScriptValue leftValue = null;
-					ScriptValue rightValue = null;
-					if (!Execute(left, space, out leftValue)) {
-						return false;
-					}
-					if (!Execute(right, space, out rightValue)) {
-						return false;
-					}
-					if (leftValue.GetValueType() != rightValue.GetValueType()) {
-						return false;
-					}
-					bool bCondition = ScriptValue.LessEqual(leftValue, rightValue);
-					result = ScriptValue.Create(bCondition);
-					return true;
+				var left = srcCondition.Substring(0, comparePos).Trim();
+				var right = srcCondition.Substring(comparePos + compareSign.Length, srcCondition.Length - comparePos - compareSign.Length).Trim();
+				if (string.IsNullOrEmpty(left) || string.IsNullOrEmpty(right)) {
+					return false;
 				}
 
-				comparePos = srcCondition.IndexOf(Grammar.COMPARE_MORE_EQUAL);
-				if (comparePos != -1) {
-					var left = srcCondition.Substring(0, comparePos).Trim();
-					var right = srcCondition.Substring(comparePos + Grammar.COMPARE_EQUIP.Length, srcCondition.Length - comparePos - Grammar.COMPARE_EQUIP.Length).Trim();
-					if (string.IsNullOrEmpty(left) || string.IsNullOrEmpty(right)) {
-						return false;
-					}
-
-					ScriptValue leftValue = null;
-					ScriptValue rightValue = null;
-					if (!Execute(left, space, out leftValue)) {
-						return false;
-					}
-					if (!Execute(right, space, out rightValue)) {
-						return false;
-					}
-					if (leftValue.GetValueType() != rightValue.GetValueType()) {
-						return false;
-					}
-					bool bCondition = ScriptValue.MoreEqual(leftValue, rightValue);
-					result = ScriptValue.Create(bCondition);
-					return true;
+				ScriptValue leftValue = null;
+				ScriptValue rightValue = null;
+				if (!Execute(left, space, out leftValue)) {
+					return false;
 				}
-
-				comparePos = srcCondition.IndexOf(Grammar.COMPARE_LESS);
-				if (comparePos != -1) {
-					var left = srcCondition.Substring(0, comparePos).Trim();
-					var right = srcCondition.Substring(comparePos + Grammar.COMPARE_EQUIP.Length, srcCondition.Length - comparePos - Grammar.COMPARE_EQUIP.Length).Trim();
-					if (string.IsNullOrEmpty(left) || string.IsNullOrEmpty(right)) {
-						return false;
-					}
-
-					ScriptValue leftValue = null;
-					ScriptValue rightValue = null;
-					if (!Execute(left, space, out leftValue)) {
-						return false;
-					}
-					if (!Execute(right, space, out rightValue)) {
-						return false;
-					}
-					if (leftValue.GetValueType() != rightValue.GetValueType()) {
-						return false;
-					}
-					bool bCondition = ScriptValue.Less(leftValue, rightValue);
-					result = ScriptValue.Create(bCondition);
-					return true;
+				if (!Execute(right, space, out rightValue)) {
+					return false;
 				}
-
-				comparePos = srcCondition.IndexOf(Grammar.COMPARE_MORE);
-				if (comparePos != -1) {
-					var left = srcCondition.Substring(0, comparePos).Trim();
-					var right = srcCondition.Substring(comparePos + Grammar.COMPARE_EQUIP.Length, srcCondition.Length - comparePos - Grammar.COMPARE_EQUIP.Length).Trim();
-					if (string.IsNullOrEmpty(left) || string.IsNullOrEmpty(right)) {
-						return false;
-					}
-
-					ScriptValue leftValue = null;
-					ScriptValue rightValue = null;
-					if (!Execute(left, space, out leftValue)) {
-						return false;
-					}
-					if (!Execute(right, space, out rightValue)) {
-						return false;
-					}
-					if (leftValue.GetValueType() != rightValue.GetValueType()) {
-						return false;
-					}
-					bool bCondition = ScriptValue.More(leftValue, rightValue);
-					result = ScriptValue.Create(bCondition);
-					return true;
+				if (leftValue.GetValueType() != rightValue.GetValueType()) {
+					return false;
 				}
+				bool bCondition = _Compare(leftValue, rightValue, compareSign);
+				result = ScriptValue.Create(bCondition);
+				return true;
 			} while (false);
 
 			// math expression
@@ -367,6 +281,21 @@ namespace gs.compiler {
 				return Math.Pow(value1, value2);
 			}
 			return 0;
+		}
+
+		private static bool _Compare(ScriptValue value1, ScriptValue value2, string sign) {
+			if (sign == Grammar.COMPARE_EQUIP) {
+				return ScriptValue.Compare(value1, value2);
+			} else if (sign == Grammar.COMPARE_LESS) {
+				return ScriptValue.Less(value1, value2);
+			} else if (sign == Grammar.COMPARE_LESS_EQUAL) {
+				return ScriptValue.LessEqual(value1, value2);
+			} else if (sign == Grammar.COMPARE_MORE) {
+				return ScriptValue.More(value1, value2);
+			} else if (sign == Grammar.COMPARE_MORE_EQUAL) {
+				return ScriptValue.MoreEqual(value1, value2);
+			}
+			return false;
 		}
 	}
 }

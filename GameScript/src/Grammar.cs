@@ -51,10 +51,10 @@ namespace gs.compiler {
 		public static readonly string COMPARE_MORE_EQUAL = ">=";
 		public static readonly string[] COMPARE_SIGNS = new string[] {
 			COMPARE_EQUIP,
+			COMPARE_LESS_EQUAL,
+			COMPARE_MORE_EQUAL,
 			COMPARE_LESS,
 			COMPARE_MORE,
-			COMPARE_LESS_EQUAL,
-			COMPARE_MORE_EQUAL
 		};
 
 		// assign sign
