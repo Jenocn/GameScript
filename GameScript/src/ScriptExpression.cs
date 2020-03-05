@@ -162,8 +162,8 @@ namespace gs.compiler {
 			// math expression
 			do {
 				var calcSrc = tempSrc;
-				var mathSign = new char[] { '+', '-', '*', '/', '(', ')', '%' };
-				var highSign = new char[] { '*', '/', '%' };
+				var mathSign = new char[] { '+', '-', '*', '/', '(', ')', '%', '^' };
+				var highSign = new char[] { '*', '/', '%', '^' };
 				var lowSign = new char[] { '+', '-' };
 				if (calcSrc.IndexOfAny(mathSign) == -1) {
 					break;
@@ -352,20 +352,19 @@ namespace gs.compiler {
 		}
 
 		private static double _Calc(double value1, double value2, char sign) {
-			if (sign == '+') {
+			switch (sign) {
+			case '+':
 				return value1 + value2;
-			}
-			if (sign == '-') {
+			case '-':
 				return value1 - value2;
-			}
-			if (sign == '*') {
+			case '*':
 				return value1 * value2;
-			}
-			if (sign == '/') {
-				return Math.Round(value1 / value2, 6);
-			}
-			if (sign == '%') {
+			case '/':
+				return value1 / value2;
+			case '%':
 				return value1 % value2;
+			case '^':
+				return Math.Pow(value1, value2);
 			}
 			return 0;
 		}
