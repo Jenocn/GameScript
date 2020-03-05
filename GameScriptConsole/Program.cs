@@ -4,6 +4,10 @@ using gs.compiler;
 namespace GameScriptConsole {
     class MainClass {
 
+        public static readonly string ConsoleVersion = "1.0.0 beta";
+        public static readonly string GSDesc = "GameScript " + gs.config.Config.Version;
+        public static readonly string ConsoleDesc = "Console " + ConsoleVersion;
+
         private static void ExecuteFile(string path) {
             var fileExecuter = new FileExecuter();
             if (System.IO.File.Exists(path)) {
@@ -16,9 +20,17 @@ namespace GameScriptConsole {
             Console.WriteLine("\"" + path + "\"" + "is not a \"GameScript\" file!");
 
         }
+
+        private static void _WriteTitleLine() {
+            Console.WriteLine("---------------------------");
+            Console.WriteLine(GSDesc);
+            Console.WriteLine(ConsoleDesc);
+            Console.WriteLine("---------------------------");
+        }
+
         public static void Main(string[] args) {
 
-            Console.WriteLine("GameScript:");
+            _WriteTitleLine();
 
             if (args.Length > 0) {
                 ExecuteFile(args[0]);
@@ -33,7 +45,7 @@ namespace GameScriptConsole {
                 if (line == "cls") {
                     Console.Clear();
                     lineExecuter.Clear();
-                    Console.WriteLine("GameScript:");
+                    _WriteTitleLine();
                     continue;
                 }
                 if (line == "quit") {

@@ -54,6 +54,7 @@
     <Compile Include="src\VMFunction.cs" />
     <Compile Include="src\VMValue.cs" />
     <Compile Include="src\MethodPool.cs" />
+    <Compile Include="src\Config.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
