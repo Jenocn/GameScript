@@ -11,6 +11,10 @@ namespace gs.compiler {
 
 		// return
 		public static readonly string RETURN = "return";
+		// break
+		public static readonly string BREAK = "break";
+		// continue
+		public static readonly string CONTINUE = "continue";
 
 		// function content begin
 		public static readonly char FCB = '{';

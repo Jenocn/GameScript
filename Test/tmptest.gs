@@ -1,20 +1,21 @@
 
-Equals(num) {
-	return num < 10;
-}
+var i = 0;
 
-print(Equals(30));
+while (i < 30) {
 
-if (Equals(5)) {
+	if (i % 2 == 0) {
+	} else {
+		i = i + 1;
+		continue;
+	}
+
+	print(i);
+
+	i = i + 1;
+
+	continue;
+
 	print("yes");
-} else {
-	print("no");
 }
 
-var index = 0;
-
-while (Equals(index)) {
-	print(index);
-	
-	index = index + 1;
-}
+print("over");

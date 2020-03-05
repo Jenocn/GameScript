@@ -8,6 +8,12 @@ using System.Collections.Generic;
 namespace gs.compiler {
 	public sealed class ScriptMethod {
 
+		public enum ScriptMethodType {
+			None = 0,
+			Loop,
+			Condition,
+		}
+
 		private string _srcBody = "";
 		private string _name = "";
 		private List<string> _params = new List<string>();
@@ -18,21 +24,23 @@ namespace gs.compiler {
 		private Dictionary<string, ScriptObject> _strings = new Dictionary<string, ScriptObject>();
 		private System.Func<List<ScriptValue>, ScriptValue> _func = null;
 		private MethodPool _methodPool = new MethodPool();
+		private ScriptMethodType _scriptMethodType = ScriptMethodType.None;
 
 		public ScriptMethod(System.Func<List<ScriptValue>, ScriptValue> func) {
 			_func = func;
 		}
 
 		public ScriptMethod(string srcHeader, string srcBody, ScriptMethod parent = null) {
+			_ParseHeader(srcHeader);
 			_srcBody = srcBody;
 			_parent = parent;
-			_ParseHeader(srcHeader);
 			_ParseSrcbody();
 		}
 
-		public ScriptMethod(string srcBody, ScriptMethod parent = null) {
+		public ScriptMethod(string srcBody, ScriptMethod parent = null, ScriptMethodType type = ScriptMethodType.None) {
 			_srcBody = srcBody;
 			_parent = parent;
+			_scriptMethodType = type;
 			_ParseSrcbody();
 		}
 
@@ -104,10 +112,24 @@ namespace gs.compiler {
 			_name = nameSrc;
 		}
 
+		public bool Execute(List<ScriptValue> args) {
+			bool bReturn = false;
+			ScriptValue ret = ScriptValue.NULL;
+			return Execute(args, out bReturn, out ret);
+		}
+
 		public bool Execute(List<ScriptValue> args, out bool bMethodReturn, out ScriptValue methodReturnResult) {
+			bool bBreak = false;
+			bool bContinue = false;
+			return Execute(args, out bMethodReturn, out methodReturnResult, out bBreak, out bContinue);
+		}
+
+		public bool Execute(List<ScriptValue> args, out bool bMethodReturn, out ScriptValue methodReturnResult, out bool bMethodBreak, out bool bMethodContinue) {
 
 			bMethodReturn = false;
 			methodReturnResult = ScriptValue.NULL;
+			bMethodBreak = false;
+			bMethodContinue = false;
 			_objects.Clear();
 
 			if (_func != null) {
@@ -216,15 +238,26 @@ namespace gs.compiler {
 								return false;
 							}
 							if (bCondition) {
-								var conditionExe = new ScriptMethod(ifBody, this);
+								var conditionExe = new ScriptMethod(ifBody, this, ScriptMethodType.Condition);
 								ScriptValue conditionResult = ScriptValue.NULL;
 								bool bConditionReturn = false;
-								if (!conditionExe.Execute(null, out bConditionReturn, out conditionResult)) {
+								bool bConditionBreak = false;
+								bool bConditionContinue = false;
+								if (!conditionExe.Execute(null, out bConditionReturn, out conditionResult, out bConditionBreak, out bConditionContinue)) {
 									Logger.Error(ifHeader);
 									return false;
 								}
 								if (bConditionReturn) {
 									methodReturnResult = conditionResult;
+									return true;
+								}
+								if (bConditionBreak || bConditionContinue) {
+									if (!FindScriptMethodType(ScriptMethodType.Loop)) {
+										Logger.Error(ifHeader);
+										return false;
+									}
+									bMethodBreak = bConditionBreak;
+									bMethodContinue = bConditionContinue;
 									return true;
 								}
 								break;
@@ -233,15 +266,26 @@ namespace gs.compiler {
 						if (!bCondition) {
 							// else
 							if (srcElseBody.Length == 0) { continue; }
-							var elseExe = new ScriptMethod(srcElseBody, this);
+							var elseExe = new ScriptMethod(srcElseBody, this, ScriptMethodType.Condition);
 							ScriptValue conditionResult = ScriptValue.NULL;
 							bool bConditionReturn = false;
-							if (!elseExe.Execute(null, out bConditionReturn, out conditionResult)) {
+							bool bConditionBreak = false;
+							bool bConditionContinue = false;
+							if (!elseExe.Execute(null, out bConditionReturn, out conditionResult, out bConditionBreak, out bConditionContinue)) {
 								Logger.Error(srcElseBody);
 								return false;
 							}
 							if (bConditionReturn) {
 								methodReturnResult = conditionResult;
+								return true;
+							}
+							if (bConditionBreak || bConditionContinue) {
+								if (!FindScriptMethodType(ScriptMethodType.Loop)) {
+									Logger.Error(srcElseBody);
+									return false;
+								}
+								bMethodBreak = bConditionBreak;
+								bMethodContinue = bConditionContinue;
 								return true;
 							}
 						}
@@ -261,16 +305,24 @@ namespace gs.compiler {
 							if (!bCondition) {
 								break;
 							}
-							var conditionExe = new ScriptMethod(srcNewBody, this);
+							var conditionExe = new ScriptMethod(srcNewBody, this, ScriptMethodType.Loop);
 							ScriptValue conditionResult = ScriptValue.NULL;
 							bool bConditionReturn = false;
-							if (!conditionExe.Execute(null, out bConditionReturn, out conditionResult)) {
+							bool bConditionBreak = false;
+							bool bConditionContinue = false;
+							if (!conditionExe.Execute(null, out bConditionReturn, out conditionResult, out bConditionBreak, out bConditionContinue)) {
 								Logger.Error(srcNewHeader);
 								return false;
 							}
 							if (bConditionReturn) {
 								methodReturnResult = conditionResult;
 								return true;
+							}
+							if (bConditionBreak) {
+								break;
+							}
+							if (bConditionContinue) {
+								continue;
 							}
 						}
 						continue;
@@ -324,6 +376,27 @@ namespace gs.compiler {
 						}
 					}
 					methodReturnResult = result;
+					return true;
+				}
+
+				// break;
+				var breakPos = sentence.IndexOf(Grammar.BREAK);
+				if (breakPos == 0) {
+					bMethodBreak = true;
+					if (!FindScriptMethodType(ScriptMethodType.Loop)) {
+						Logger.Error(sentence);
+						return false;
+					}
+					return true;
+				}
+				// continue;
+				var continuePos = sentence.IndexOf(Grammar.CONTINUE);
+				if (continuePos == 0) {
+					bMethodContinue = true;
+					if (!FindScriptMethodType(ScriptMethodType.Loop)) {
+						Logger.Error(sentence);
+						return false;
+					}
 					return true;
 				}
 
@@ -435,6 +508,19 @@ namespace gs.compiler {
 				}
 			}
 			return ret;
+		}
+
+		public ScriptMethodType GetScriptMethodType() {
+			return _scriptMethodType;
+		}
+		public bool FindScriptMethodType(ScriptMethodType type) {
+			if (_scriptMethodType == type) {
+				return true;
+			}
+			if (_parent != null) {
+				return _parent.FindScriptMethodType(type);
+			}
+			return false;
 		}
 
 		private string _ConvertObjectName(string name) {
