@@ -42,7 +42,7 @@ namespace GameScriptConsole {
                 Console.Write(">");
                 var line = Console.ReadLine();
                 line = line.Trim();
-                if (line == "cls") {
+                if (line == "cls" || line == "clear") {
                     Console.Clear();
                     lineExecuter.Clear();
                     _WriteTitleLine();
