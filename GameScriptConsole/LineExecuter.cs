@@ -14,7 +14,10 @@ public class LineExecuter {
 			return result.ToString();
 		}
 
-		var tempSrc = _src + line + '\n';
+		string tempSrc = _src;
+		if (!string.IsNullOrEmpty(line)) {
+			tempSrc += (line + '\n');
+		}
 		var child = new ScriptMethod(tempSrc, method);
 		bool bReturn = false;
 		if (child.Execute(null, out bReturn, out result)) {

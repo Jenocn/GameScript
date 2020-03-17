@@ -34,6 +34,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="LineExecuter.cs" />
     <Compile Include="FileExecuter.cs" />
+    <Compile Include="CommandManager.cs" />
+    <Compile Include="GSConsole.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameScript\GameScript.csproj">
