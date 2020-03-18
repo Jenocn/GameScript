@@ -19,8 +19,11 @@ namespace gs.compiler {
 		private List<string> _params = new List<string>();
 
 		private ScriptMethod _parent = null;
+		// temp space will clear when execute end
 		private Dictionary<string, ScriptMethod> _methods = new Dictionary<string, ScriptMethod>();
 		private Dictionary<string, ScriptObject> _objects = new Dictionary<string, ScriptObject>();
+
+		// always
 		private Dictionary<string, ScriptObject> _strings = new Dictionary<string, ScriptObject>();
 		private System.Func<List<ScriptValue>, ScriptValue> _func = null;
 		private MethodPool _methodPool = new MethodPool();
@@ -130,7 +133,7 @@ namespace gs.compiler {
 			methodReturnResult = ScriptValue.NULL;
 			bMethodBreak = false;
 			bMethodContinue = false;
-			_objects.Clear();
+			_Clear();
 
 			if (_func != null) {
 				methodReturnResult = _func(args);
@@ -471,6 +474,7 @@ namespace gs.compiler {
 					}
 				}
 			}
+
 			return true;
 		}
 
@@ -534,6 +538,11 @@ namespace gs.compiler {
 				return name;
 			}
 			return name.Replace(sign, findObj.GetValue().ToString());
+		}
+
+		private void _Clear() {
+			_methods.Clear();
+			_objects.Clear();
 		}
 	}
 }
