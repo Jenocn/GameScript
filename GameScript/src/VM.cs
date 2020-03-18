@@ -4,7 +4,6 @@
 */
 
 using System;
-using System.Collections.Generic;
 using gs.compiler;
 
 namespace gs {
@@ -16,6 +15,10 @@ namespace gs {
 
 		public static void SetLogger(Action<string> logCall) {
 			Logger.SetLoggerFunc(logCall);
+		}
+
+		public static void Using(string name, string src) {
+			UsingMemory.Add(name, new ScriptMethod(src));
 		}
 	}
 }

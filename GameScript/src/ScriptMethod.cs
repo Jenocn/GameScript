@@ -21,6 +21,7 @@ namespace gs.compiler {
 		private ScriptMethod _parent = null;
 		// temp space will clear when execute end
 		private Dictionary<string, ScriptMethod> _methods = new Dictionary<string, ScriptMethod>();
+		private Dictionary<string, ScriptMethod> _usings = new Dictionary<string, ScriptMethod>();
 		private Dictionary<string, ScriptObject> _objects = new Dictionary<string, ScriptObject>();
 
 		// always
@@ -361,9 +362,17 @@ namespace gs.compiler {
 				// return
 				var returnPos = sentence.IndexOf(Grammar.RETURN);
 				if (returnPos == 0) {
+					if (sentence.Length <= Grammar.RETURN.Length + 1) {
+						Logger.Error(sentence);
+						return false;
+					}
+					if (!string.IsNullOrEmpty(sentence.Substring(Grammar.RETURN.Length, 1).Trim())) {
+						Logger.Error(sentence);
+						return false;
+					}
 					bMethodReturn = true;
 					ScriptValue result = ScriptValue.NULL;
-					var returnValueStr = sentence.Substring(Grammar.RETURN.Length).Trim();
+					var returnValueStr = sentence.Substring(Grammar.RETURN.Length + 1).Trim();
 					var returnFpbPos = returnValueStr.IndexOf(Grammar.FPB);
 					if (returnFpbPos != -1) {
 						// method
@@ -380,6 +389,32 @@ namespace gs.compiler {
 					}
 					methodReturnResult = result;
 					return true;
+				}
+
+				// using
+				var usingPos = sentence.IndexOf(Grammar.USING);
+				if (usingPos == 0) {
+					if (sentence.Length <= Grammar.USING.Length + 1) {
+						Logger.Error(sentence);
+						return false;
+					}
+					if (!string.IsNullOrEmpty(sentence.Substring(Grammar.USING.Length, 1).Trim())) {
+						Logger.Error(sentence);
+						return false;
+					}
+					var usingSpaceName = sentence.Substring(Grammar.USING.Length + 1).Trim();
+					var usingSpace = UsingMemory.Get(usingSpaceName);
+					if (usingSpace == null) {
+						Logger.Error(sentence);
+						return false;
+					}
+					if (_usings.ContainsKey(usingSpaceName)) {
+						Logger.Error(sentence);
+						return false;
+					}
+					usingSpace.Execute(null);
+					_usings.Add(usingSpaceName, usingSpace);
+					continue;
 				}
 
 				// break;
@@ -496,7 +531,16 @@ namespace gs.compiler {
 				return ret;
 			}
 			if (_parent != null) {
-				return _parent.FindMethod(name);
+				ret = _parent.FindMethod(name);
+				if (ret != null) {
+					return ret;
+				}
+			}
+			foreach (var item in _usings) {
+				ret = item.Value.FindMethod(name);
+				if (ret != null) {
+					return ret;
+				}
 			}
 			return null;
 		}
@@ -504,14 +548,25 @@ namespace gs.compiler {
 		public ScriptObject FindObject(string name) {
 			name = _ConvertObjectName(name);
 			ScriptObject ret = null;
-			if (!_objects.TryGetValue(name, out ret)) {
-				if (!_strings.TryGetValue(name, out ret)) {
-					if (_parent != null) {
-						return _parent.FindObject(name);
-					}
+			if (_objects.TryGetValue(name, out ret)) {
+				return ret;
+			}
+			if (_strings.TryGetValue(name, out ret)) {
+				return ret;
+			}
+			if (_parent != null) {
+				ret = _parent.FindObject(name);
+				if (ret != null) {
+					return ret;
 				}
 			}
-			return ret;
+			foreach (var item in _usings) {
+				ret = item.Value.FindObject(name);
+				if (ret != null) {
+					return ret;
+				}
+			}
+			return null;
 		}
 
 		public ScriptMethodType GetScriptMethodType() {
@@ -543,6 +598,7 @@ namespace gs.compiler {
 		private void _Clear() {
 			_methods.Clear();
 			_objects.Clear();
+			_usings.Clear();
 		}
 	}
 }

@@ -67,6 +67,9 @@ namespace gs.compiler {
 		// var
 		public static readonly string VAR = "var";
 
+		// import
+		public static readonly string USING = "using";
+
 		// special char of name
 		public static readonly char[] SPECIAL_CHAR = new char[] { ' ', '\n' };
 	}

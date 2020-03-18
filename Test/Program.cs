@@ -5,9 +5,14 @@ using System.IO;
 namespace Test {
 	class Program {
 		static void Main(string[] args) {
-			var text = File.ReadAllText("../../tmptest.gs");
-			var func = gs.VM.Load(text);
-			func.Execute();
+			// var text = File.ReadAllText("../../tmptest.gs");
+			// var func = gs.VM.Load(text);
+			// func.Execute();
+
+			var text = File.ReadAllText("../../student.gs");
+			gs.VM.Using("student", text);
+			var mainFunc = gs.VM.Load(File.ReadAllText("../../main.gs"));
+			mainFunc.Execute();
 
 			//gs.VM.RegisterFunction("sum", (List<gs.VMValue> tempArgs) => {
 			//	double ret = 0;
