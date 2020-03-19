@@ -21,7 +21,7 @@ namespace gs.compiler {
 		private ScriptMethod _parent = null;
 		// temp space will clear when execute end
 		private Dictionary<string, ScriptMethod> _methods = new Dictionary<string, ScriptMethod>();
-		private Dictionary<string, ScriptMethod> _usings = new Dictionary<string, ScriptMethod>();
+		private Dictionary<string, ScriptUsing> _usings = new Dictionary<string, ScriptUsing>();
 		private Dictionary<string, ScriptObject> _objects = new Dictionary<string, ScriptObject>();
 
 		// always
@@ -49,13 +49,10 @@ namespace gs.compiler {
 			_ParseSrcbody();
 		}
 
-		private static ScriptMethod _CreateFromUsingSpace(ScriptMethod value) {
-			if (value == null) {
-				return null;
-			}
+		public static ScriptMethod NewMethodForUsing(ScriptMethod method) {
 			var ret = new ScriptMethod("");
-			ret._srcBody = value._srcBody;
-			ret._strings = value._strings;
+			ret._strings = method._strings;
+			ret._srcBody = method._srcBody;
 			return ret;
 		}
 
@@ -522,11 +519,9 @@ namespace gs.compiler {
 						Logger.Error(sentence);
 						return false;
 					}
-					if (!usingSpace.IsExecuted()) {
-						if (!usingSpace.Execute(null)) {
-							Logger.Error(sentence);
-							return false;
-						}
+					if (!usingSpace.ExecuteUsing()) {
+						Logger.Error(sentence);
+						return false;
 					}
 					_usings.Add(usingSpaceName, usingSpace);
 					continue;
@@ -557,8 +552,8 @@ namespace gs.compiler {
 						Logger.Error(sentence);
 						return false;
 					}
-					var newSpace = _CreateFromUsingSpace(tempSpace);
-					if (!newSpace.Execute(null)) {
+					var newSpace = ScriptUsing.Create(tempSpace);
+					if (!newSpace.ExecuteUsing()) {
 						Logger.Error(sentence);
 						return false;
 					}
@@ -680,7 +675,7 @@ namespace gs.compiler {
 				return ret;
 			}
 			foreach (var item in _usings) {
-				ret = item.Value.FindMethod(name);
+				ret = item.Value.GetScriptMethod().FindMethod(name);
 				if (ret != null) {
 					return ret;
 				}
@@ -704,7 +699,7 @@ namespace gs.compiler {
 				return ret;
 			}
 			foreach (var item in _usings) {
-				ret = item.Value.FindObject(name);
+				ret = item.Value.GetScriptMethod().FindObject(name);
 				if (ret != null) {
 					return ret;
 				}
