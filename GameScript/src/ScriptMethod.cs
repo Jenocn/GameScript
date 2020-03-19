@@ -437,8 +437,8 @@ namespace gs.compiler {
 						Logger.Error(sentence);
 						return false;
 					}
-					if (FindObject(arrayRightNameStr) != null) {
-						Logger.Error(sentence);
+					if (FindObjectFromSelf(arrayRightNameStr) != null) {
+						Logger.Error(sentence, arrayRightNameStr + " is exists!");
 						return false;
 					}
 
@@ -488,8 +488,8 @@ namespace gs.compiler {
 					}
 					for (int i = arrStarIndex; i <= arrEndIndex; ++i) {
 						var leftName = arrayRightNameStr + Grammar.ARRB + i + Grammar.ARRE;
-						if (FindObject(leftName) != null) {
-							Logger.Error(sentence);
+						if (FindObjectFromSelf(leftName) != null) {
+							Logger.Error(sentence, leftName + " is exists!");
 							return false;
 						}
 						_objects.Add(leftName, new ScriptObject(leftName, ScriptValue.NULL));
@@ -628,7 +628,7 @@ namespace gs.compiler {
 							Logger.Error(sentence);
 							return false;
 						}
-						if (FindObject(leftName) != null) {
+						if (FindObjectFromSelf(leftName) != null) {
 							Logger.Error(sentence, leftName + " is exists!");
 							return false;
 						}
@@ -714,6 +714,18 @@ namespace gs.compiler {
 				if (ret != null) {
 					return ret;
 				}
+			}
+			return null;
+		}
+
+		private ScriptObject FindObjectFromSelf(string name) {
+			name = _ConvertObjectName(name);
+			ScriptObject ret = null;
+			if (_objects.TryGetValue(name, out ret)) {
+				return ret;
+			}
+			if (_strings.TryGetValue(name, out ret)) {
+				return ret;
 			}
 			return null;
 		}
