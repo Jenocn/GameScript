@@ -67,6 +67,11 @@ namespace gs.compiler {
 		// var
 		public static readonly string VAR = "var";
 
+		// array
+		public static readonly string ARRAY = "array";
+		// array split char
+		public static readonly char ARRAY_SPLIT = ',';
+
 		// using
 		public static readonly string USING = "using";
 

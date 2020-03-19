@@ -403,6 +403,100 @@ namespace gs.compiler {
 					return true;
 				}
 
+				// array
+				var arrayPos = sentence.IndexOf(Grammar.ARRAY);
+				if (arrayPos == 0) {
+					if (sentence.Length <= Grammar.ARRAY.Length + 1) {
+						Logger.Error(sentence);
+						return false;
+					}
+					if (!string.IsNullOrEmpty(sentence.Substring(Grammar.ARRAY.Length, 1).Trim())) {
+						Logger.Error(sentence);
+						return false;
+					}
+					var arrayRightStr = sentence.Substring(Grammar.USING.Length + 1).Trim();
+					if (string.IsNullOrEmpty(arrayRightStr)) {
+						Logger.Error(sentence);
+						return false;
+					}
+
+					var arrbPos = arrayRightStr.IndexOf(Grammar.ARRB);
+					if (arrbPos == -1) {
+						Logger.Error(sentence);
+						return false;
+					}
+
+					var arrayRightValueStr = arrayRightStr.Substring(arrbPos).Trim();
+					if (arrayRightValueStr.Length < 3) {
+						Logger.Error(sentence);
+						return false;
+					}
+
+					var arrayRightNameStr = arrayRightStr.Substring(0, arrbPos).Trim();
+					if (string.IsNullOrEmpty(arrayRightNameStr)) {
+						Logger.Error(sentence);
+						return false;
+					}
+					if (FindObject(arrayRightNameStr) != null) {
+						Logger.Error(sentence);
+						return false;
+					}
+
+					int arrayEndPos = tool.GrammarTool.ReadPairSignPos(arrayRightValueStr, 1, Grammar.ARRB, Grammar.ARRE);
+					if (arrayEndPos <= 0 || arrayEndPos > arrayRightValueStr.Length - 1) {
+						Logger.Error(sentence);
+						return false;
+					}
+					var valueStr = arrayRightValueStr.Substring(1, arrayEndPos - 1);
+					var valueStrSplitArr = valueStr.Split(Grammar.ARRAY_SPLIT);
+					if (valueStrSplitArr.Length > 2) {
+						Logger.Error(sentence);
+						return false;
+					}
+					var arrBaseValueStr = valueStrSplitArr[0].Trim();
+					if (string.IsNullOrEmpty(arrBaseValueStr)) {
+						Logger.Error(sentence);
+						return false;
+					}
+					int arrBaseValue = 0;
+					if (!int.TryParse(arrBaseValueStr, out arrBaseValue)) {
+						Logger.Error(sentence);
+						return false;
+					}
+
+					int arrStarIndex = 0;
+					int arrEndIndex = arrBaseValue - 1;
+
+					if (valueStrSplitArr.Length == 2) {
+						var arrNextValueStr = valueStrSplitArr[1].Trim();
+						if (string.IsNullOrEmpty(arrNextValueStr)) {
+							Logger.Error(sentence);
+							return false;
+						}
+						int arrNextValue = 0;
+						if (!int.TryParse(arrNextValueStr, out arrNextValue)) {
+							Logger.Error(sentence);
+							return false;
+						}
+
+						arrStarIndex = arrBaseValue;
+						arrEndIndex = arrNextValue;
+					}
+					if (arrStarIndex >= arrEndIndex) {
+						Logger.Error(sentence);
+						return false;
+					}
+					for (int i = arrStarIndex; i <= arrEndIndex; ++i) {
+						var leftName = arrayRightNameStr + Grammar.ARRB + i + Grammar.ARRE;
+						if (FindObject(leftName) != null) {
+							Logger.Error(sentence);
+							return false;
+						}
+						_objects.Add(leftName, new ScriptObject(leftName, ScriptValue.NULL));
+					}
+					continue;
+				}
+
 				// using
 				var usingPos = sentence.IndexOf(Grammar.USING);
 				if (usingPos == 0) {
@@ -415,6 +509,10 @@ namespace gs.compiler {
 						return false;
 					}
 					var usingSpaceName = sentence.Substring(Grammar.USING.Length + 1).Trim();
+					if (string.IsNullOrEmpty(usingSpaceName)) {
+						Logger.Error(sentence);
+						return false;
+					}
 					var usingSpace = UsingMemory.Get(usingSpaceName);
 					if (usingSpace == null) {
 						Logger.Error(sentence);
@@ -446,6 +544,10 @@ namespace gs.compiler {
 						return false;
 					}
 					var newSpaceName = sentence.Substring(Grammar.NEW.Length + 1).Trim();
+					if (string.IsNullOrEmpty(newSpaceName)) {
+						Logger.Error(sentence);
+						return false;
+					}
 					var tempSpace = UsingMemory.Get(newSpaceName);
 					if (tempSpace == null) {
 						Logger.Error(sentence);
