@@ -12,7 +12,9 @@ namespace Test {
 			var text = File.ReadAllText("../../student.gs");
 			gs.VM.Using("student", text);
 			var mainFunc = gs.VM.Load(File.ReadAllText("../../main.gs"));
-			mainFunc.Execute();
+			var mainFunc2 = gs.VM.Load(File.ReadAllText("../../main2.gs"));
+            mainFunc.Execute();
+            mainFunc2.Execute();
 
 			//gs.VM.RegisterFunction("sum", (List<gs.VMValue> tempArgs) => {
 			//	double ret = 0;

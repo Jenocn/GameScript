@@ -2,11 +2,11 @@ using System.Collections.Generic;
 
 namespace gs.compiler {
 	public static class UsingMemory {
-		private static Dictionary<string, string> _memoryList = new Dictionary<string, string>();
-		public static void Add(string name, string space) {
+		private static Dictionary<string, ScriptMethod> _memoryList = new Dictionary<string, ScriptMethod>();
+		public static void Add(string name, string src) {
 			if (_memoryList.ContainsKey(name)) {
 			}
-			_memoryList.Add(name, space);
+			_memoryList.Add(name, new ScriptMethod(src));
 		}
 
 		public static void Remove(string name) {
@@ -14,9 +14,9 @@ namespace gs.compiler {
 		}
 
 		public static ScriptMethod Get(string name) {
-			string ret = null;
+			ScriptMethod ret = null;
 			if (_memoryList.TryGetValue(name, out ret)) {
-				return new ScriptMethod(ret);
+				return ret;
 			}
 			return null;
 		}

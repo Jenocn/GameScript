@@ -29,6 +29,7 @@ namespace gs.compiler {
 		private System.Func<List<ScriptValue>, ScriptValue> _func = null;
 		private MethodPool _methodPool = new MethodPool();
 		private ScriptMethodType _scriptMethodType = ScriptMethodType.None;
+		private bool _bExecuted = false;
 
 		public ScriptMethod(System.Func<List<ScriptValue>, ScriptValue> func) {
 			_func = func;
@@ -46,6 +47,16 @@ namespace gs.compiler {
 			_parent = parent;
 			_scriptMethodType = type;
 			_ParseSrcbody();
+		}
+
+		private static ScriptMethod _CreateFromUsingSpace(ScriptMethod value) {
+			if (value == null) {
+				return null;
+			}
+			var ret = new ScriptMethod("");
+			ret._srcBody = value._srcBody;
+			ret._strings = value._strings;
+			return ret;
 		}
 
 		private void _ParseSrcbody() {
@@ -130,6 +141,7 @@ namespace gs.compiler {
 
 		public bool Execute(List<ScriptValue> args, out bool bMethodReturn, out ScriptValue methodReturnResult, out bool bMethodBreak, out bool bMethodContinue) {
 
+			_bExecuted = true;
 			bMethodReturn = false;
 			methodReturnResult = ScriptValue.NULL;
 			bMethodBreak = false;
@@ -412,8 +424,43 @@ namespace gs.compiler {
 						Logger.Error(sentence);
 						return false;
 					}
-					usingSpace.Execute(null);
+					if (!usingSpace.IsExecuted()) {
+						if (!usingSpace.Execute(null)) {
+							Logger.Error(sentence);
+							return false;
+						}
+					}
 					_usings.Add(usingSpaceName, usingSpace);
+					continue;
+				}
+
+				// new
+				var newPos = sentence.IndexOf(Grammar.NEW);
+				if (newPos == 0) {
+					if (sentence.Length <= Grammar.NEW.Length + 1) {
+						Logger.Error(sentence);
+						return false;
+					}
+					if (!string.IsNullOrEmpty(sentence.Substring(Grammar.NEW.Length, 1).Trim())) {
+						Logger.Error(sentence);
+						return false;
+					}
+					var newSpaceName = sentence.Substring(Grammar.NEW.Length + 1).Trim();
+					var tempSpace = UsingMemory.Get(newSpaceName);
+					if (tempSpace == null) {
+						Logger.Error(sentence);
+						return false;
+					}
+					if (_usings.ContainsKey(newSpaceName)) {
+						Logger.Error(sentence);
+						return false;
+					}
+					var newSpace = _CreateFromUsingSpace(tempSpace);
+					if (!newSpace.Execute(null)) {
+						Logger.Error(sentence);
+						return false;
+					}
+					_usings.Add(newSpaceName, newSpace);
 					continue;
 				}
 
@@ -530,14 +577,14 @@ namespace gs.compiler {
 			if (ret != null) {
 				return ret;
 			}
-			if (_parent != null) {
-				ret = _parent.FindMethod(name);
+			foreach (var item in _usings) {
+				ret = item.Value.FindMethod(name);
 				if (ret != null) {
 					return ret;
 				}
 			}
-			foreach (var item in _usings) {
-				ret = item.Value.FindMethod(name);
+			if (_parent != null) {
+				ret = _parent.FindMethod(name);
 				if (ret != null) {
 					return ret;
 				}
@@ -554,14 +601,14 @@ namespace gs.compiler {
 			if (_strings.TryGetValue(name, out ret)) {
 				return ret;
 			}
-			if (_parent != null) {
-				ret = _parent.FindObject(name);
+			foreach (var item in _usings) {
+				ret = item.Value.FindObject(name);
 				if (ret != null) {
 					return ret;
 				}
 			}
-			foreach (var item in _usings) {
-				ret = item.Value.FindObject(name);
+			if (_parent != null) {
+				ret = _parent.FindObject(name);
 				if (ret != null) {
 					return ret;
 				}
@@ -580,6 +627,10 @@ namespace gs.compiler {
 				return _parent.FindScriptMethodType(type);
 			}
 			return false;
+		}
+
+		public bool IsExecuted() {
+			return _bExecuted;
 		}
 
 		private string _ConvertObjectName(string name) {
