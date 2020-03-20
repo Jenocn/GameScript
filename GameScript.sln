@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Test", "Test\Test.csproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameScriptConsole", "GameScriptConsole\GameScriptConsole.csproj", "{BC709564-32A0-4A8C-A873-F679E438FE45}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameScriptApplication", "GameScriptApplication\GameScriptApplication.csproj", "{DD971DA9-CB7A-42BF-830F-E02DB73AA74B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{BC709564-32A0-4A8C-A873-F679E438FE45}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC709564-32A0-4A8C-A873-F679E438FE45}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC709564-32A0-4A8C-A873-F679E438FE45}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD971DA9-CB7A-42BF-830F-E02DB73AA74B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD971DA9-CB7A-42BF-830F-E02DB73AA74B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD971DA9-CB7A-42BF-830F-E02DB73AA74B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD971DA9-CB7A-42BF-830F-E02DB73AA74B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
