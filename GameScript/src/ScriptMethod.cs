@@ -552,8 +552,8 @@ namespace gs.compiler {
 						Logger.Error(sentence);
 						return false;
 					}
-					var newSpace = ScriptUsing.Create(tempSpace);
-					if (!newSpace.ExecuteUsing()) {
+					var newSpace = tempSpace.Clone();
+					if ((newSpace == null) || (!newSpace.ExecuteUsing())) {
 						Logger.Error(sentence);
 						return false;
 					}

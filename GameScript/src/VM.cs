@@ -18,7 +18,7 @@ namespace gs {
 		}
 
 		public static void Using(string name, string src) {
-			UsingMemory.Add(name, src);
+			UsingMemory.Add(name, ScriptUsing.Create(src));
 		}
 
 		public static void Using(string name, ScriptUsing value) {
