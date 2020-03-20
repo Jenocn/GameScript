@@ -382,15 +382,7 @@ namespace gs.compiler {
 					bMethodReturn = true;
 					ScriptValue result = ScriptValue.NULL;
 					var returnValueStr = sentence.Substring(Grammar.RETURN.Length + 1).Trim();
-					var returnFpbPos = returnValueStr.IndexOf(Grammar.FPB);
-					if (returnFpbPos != -1) {
-						// method
-						if (!ScriptMethodCall.Execute(returnValueStr, this, out result)) {
-							Logger.Error(sentence);
-							return false;
-						}
-					} else {
-
+					if (!ScriptMethodCall.Execute(returnValueStr, this, out result)) {
 						if (!ScriptExpression.Execute(returnValueStr, this, out result)) {
 							Logger.Error(sentence);
 							return false;
