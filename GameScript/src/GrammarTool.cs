@@ -15,31 +15,32 @@ namespace gs.compiler.tool {
 			}
 			var index = 0;
 			var length = src.Length;
-			while (index != length) {
+			while (index < length) {
 				var startPos = index;
 				index = length;
 
 				// find param
 				var fpsPos = src.IndexOf(Grammar.FPS, startPos);
 				if (fpsPos != -1) {
-					index = fpsPos + 1;
+                    index = fpsPos;
 				}
 
 				// find method
 				var fpbPos = src.IndexOf(Grammar.FPB, startPos);
 				if (fpbPos != -1 && fpbPos < fpsPos) {
-					var fpePos = ReadPairSignPos(src, fpbPos + 1, '(', ')');
+					var fpePos = ReadPairSignPos(src, fpbPos + 1, Grammar.FPB, Grammar.FPE);
 					if (fpePos > fpsPos) {
 						index = fpePos + 1;
 						var methodEnd = src.IndexOf(Grammar.FPS, index);
 						if (methodEnd != -1) {
-							index = methodEnd + 1;
+							index = methodEnd;
 						}
 					}
 				}
 
 				var argStr = src.Substring(startPos, index - startPos).Trim();
 				ret.Add(argStr);
+				++index;
 			}
 
 			return ret;

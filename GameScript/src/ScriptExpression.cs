@@ -286,6 +286,8 @@ namespace gs.compiler {
 		private static bool _Compare(ScriptValue value1, ScriptValue value2, string sign) {
 			if (sign == Grammar.COMPARE_EQUIP) {
 				return ScriptValue.Compare(value1, value2);
+			} else if (sign == Grammar.COMPARE_NOT_EQUIP) {
+				return !ScriptValue.Compare(value1, value2);
 			} else if (sign == Grammar.COMPARE_LESS) {
 				return ScriptValue.Less(value1, value2);
 			} else if (sign == Grammar.COMPARE_LESS_EQUAL) {

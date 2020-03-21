@@ -49,12 +49,14 @@ namespace gs.compiler {
 
 		// compare
 		public static readonly string COMPARE_EQUIP = "==";
+		public static readonly string COMPARE_NOT_EQUIP = "!=";
 		public static readonly string COMPARE_LESS = "<";
 		public static readonly string COMPARE_MORE = ">";
 		public static readonly string COMPARE_LESS_EQUAL = "<=";
 		public static readonly string COMPARE_MORE_EQUAL = ">=";
 		public static readonly string[] COMPARE_SIGNS = new string[] {
 			COMPARE_EQUIP,
+			COMPARE_NOT_EQUIP,
 			COMPARE_LESS_EQUAL,
 			COMPARE_MORE_EQUAL,
 			COMPARE_LESS,
