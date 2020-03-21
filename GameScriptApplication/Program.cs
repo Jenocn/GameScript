@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using gs;
+using gs.compiler.tool;
 
 namespace GameScriptApplication {
     public class SourcesConfig {
@@ -35,11 +36,11 @@ namespace GameScriptApplication {
                     if (ReadSrc(item, out src)) {
                         var itemSplits = item.Split(new char[] { '.' }, StringSplitOptions.RemoveEmptyEntries);
                         var name = itemSplits[0].Replace('/', '.').Replace('\\', '.');
-                        VM.Using(name, src);
+                        VM.AddUsing(name, src);
                     }
                 }
 
-                VM.Load(mainSrc).Execute();
+                LoadScript(mainSrc);
             } while (false);
 
             Console.Write("Press any key to continue...");
@@ -63,7 +64,14 @@ namespace GameScriptApplication {
                 mainText = text.Substring(mainPos + 5).Trim();
             } else {
                 mainText = text.Substring(mainPos + 5, listPos - mainPos - 5).Trim();
-                listText = text.Substring(listPos + 5).Trim();
+                var tempText = text.Substring(listPos + 5).Trim();
+                var cbPos = tempText.IndexOf('[');
+                if (cbPos != -1) {
+                    var cePos = GrammarTool.ReadPairSignPos(tempText, cbPos + 1, '[', ']');
+                    if (cePos > cbPos) {
+                        listText = tempText.Substring(cbPos + 1, cePos - cbPos - 1);
+                    }
+                }
             }
             if (string.IsNullOrEmpty(mainText)) {
                 return null;
@@ -88,6 +96,11 @@ namespace GameScriptApplication {
             }
             src = File.ReadAllText(filename);
             return true;
+        }
+
+        private static void LoadScript(string src) {
+            var method = VM.Load(src);
+            method.Execute();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Test {
 			// func.Execute();
 
 			var text = File.ReadAllText("../../student.gs");
-			gs.VM.Using("student", text);
+			gs.VM.AddUsing("student", text);
 			var mainFunc = gs.VM.Load(File.ReadAllText("../../main.gs"));
 			var mainFunc2 = gs.VM.Load(File.ReadAllText("../../main2.gs"));
             mainFunc.Execute();

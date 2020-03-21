@@ -41,7 +41,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="sources.conf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
