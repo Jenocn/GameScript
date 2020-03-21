@@ -79,7 +79,15 @@ namespace gs.compiler {
 				var mathSign = new char[] { '+', '-', '*', '/', '(', ')', '%', '^' };
 				var highSign = new char[] { '*', '/', '%', '^' };
 				var lowSign = new char[] { '+', '-' };
-				if (calcSrc.IndexOfAny(mathSign) == -1) {
+				var findMathSignPos = calcSrc.IndexOfAny(mathSign);
+				var findSSSignPos = calcSrc.IndexOf(Grammar.SS);
+				if (findSSSignPos != -1 && findSSSignPos < findMathSignPos) {
+					var findSSSignPosEnd = calcSrc.IndexOf(Grammar.SS, findSSSignPos + 1);
+					if (findSSSignPosEnd != -1 && findSSSignPosEnd > findMathSignPos) {
+						break;
+					}
+				}
+				if (findMathSignPos == -1) {
 					break;
 				}
 				while (true) {
@@ -183,7 +191,16 @@ namespace gs.compiler {
 					}
 
 					char tempSign = calcSrc[lowSignPos];
+
 					var findOL = calcSrc.LastIndexOfAny(mathSign, lowSignPos - 1);
+					var findOLSSEnd = calcSrc.LastIndexOf(Grammar.SS, lowSignPos - 1);
+					if (findOLSSEnd != -1 && findOLSSEnd > findOL) {
+						var findOLSSBegin = calcSrc.LastIndexOf(Grammar.SS, findOLSSEnd - 1);
+						if (findOLSSBegin != -1 && findOLSSBegin < findOL) {
+							findOL = -1;
+						}
+					}
+
 					int startPosOL = 0;
 					int endPosOR = 0;
 					string srcOL = "";
