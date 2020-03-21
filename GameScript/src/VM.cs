@@ -17,12 +17,16 @@ namespace gs {
 			Logger.SetLoggerFunc(logCall);
 		}
 
-		public static void Using(string name, string src) {
+		public static void AddUsing(string name, string src) {
 			UsingMemory.Add(name, ScriptUsing.Create(src));
 		}
 
-		public static void Using(string name, ScriptUsing value) {
+		public static void AddUsing<T>(string name, VMUsing<T> value) where T : VMUsing<T>, new() {
 			UsingMemory.Add(name, value);
+		}
+
+		public static void AddModule(VMModuleBase module) {
+			module.OnModuleLoad();
 		}
 	}
 }

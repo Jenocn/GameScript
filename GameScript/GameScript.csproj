@@ -56,6 +56,8 @@
     <Compile Include="src\Config.cs" />
     <Compile Include="src\UsingMemory.cs" />
     <Compile Include="src\ScriptUsing.cs" />
+    <Compile Include="src\VMModuleBase.cs" />
+    <Compile Include="src\VMUsing.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
