@@ -100,6 +100,7 @@ namespace GameScriptApplication {
 
         private static void LoadScript(string src) {
             var method = VM.Load(src);
+            App.Run(method);
             method.Execute();
         }
     }
