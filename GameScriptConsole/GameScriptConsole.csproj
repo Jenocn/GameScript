@@ -42,6 +42,10 @@
       <Project>{32316C43-5F27-4A73-A9E8-D09BE2771A91}</Project>
       <Name>GameScript</Name>
     </ProjectReference>
+    <ProjectReference Include="..\UsingStandard\UsingStandard.csproj">
+      <Project>{C97988A7-933F-4015-9D07-3B365A2F1848}</Project>
+      <Name>UsingStandard</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
