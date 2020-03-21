@@ -3,11 +3,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{DD971DA9-CB7A-42BF-830F-E02DB73AA74B}</ProjectGuid>
-    <OutputType>Exe</OutputType>
-    <RootNamespace>GameScriptApplication</RootNamespace>
-    <AssemblyName>GameScriptApplication</AssemblyName>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <ProjectGuid>{C97988A7-933F-4015-9D07-3B365A2F1848}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>UsingStandard</RootNamespace>
+    <AssemblyName>UsingStandard</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -17,32 +17,29 @@
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ExternalConsole>true</ExternalConsole>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <Optimize>true</Optimize>
     <OutputPath>bin\Release</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <ExternalConsole>true</ExternalConsole>
+    <ConsolePause>false</ConsolePause>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="App.cs" />
+    <Compile Include="ConsoleUsing.cs" />
+    <Compile Include="IOUsing.cs" />
+    <Compile Include="StandardModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameScript\GameScript.csproj">
       <Project>{32316C43-5F27-4A73-A9E8-D09BE2771A91}</Project>
       <Name>GameScript</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="sources.conf">
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,12 +1,18 @@
 ﻿/*
  * By Jenocn
  * https://jenocn.github.io/
-*/
+ */
 
 using gs.compiler;
 
 namespace gs {
 	public sealed class VMValue {
+
+		public static VMValue TRUE { get { return new VMValue(true); } }
+		public static VMValue FALSE { get { return new VMValue(false); } }
+		public static VMValue NULL { get { return new VMValue(); } }
+
+
 		private ScriptValue _scriptValue = null;
 
 		public VMValue() {
@@ -21,9 +27,9 @@ namespace gs {
 		}
 
 		public void SetValue(object value) {
-            if (value is string) {
-                value = "\"" + value + "\"";
-            }
+			if (value is string) {
+				value = "\"" + value + "\"";
+			}
 			_scriptValue = ScriptValue.Create(value);
 		}
 
@@ -49,25 +55,25 @@ namespace gs {
 		}
 		public double GetNumber() {
 			if (_scriptValue.GetValueType() == ScriptValueType.Number) {
-				return (double)_scriptValue.GetValue();
+				return (double) _scriptValue.GetValue();
 			}
 			return 0;
 		}
 		public int GetInt() {
-			return (int)GetNumber();
+			return (int) GetNumber();
 		}
 		public float GetFloat() {
-			return (float)GetNumber();
+			return (float) GetNumber();
 		}
 		public string GetString() {
 			if (_scriptValue.GetValueType() == ScriptValueType.String) {
-				return (string)_scriptValue.GetValue();
+				return (string) _scriptValue.GetValue();
 			}
 			return "";
 		}
 		public bool GetBool() {
 			if (_scriptValue.GetValueType() == ScriptValueType.Bool) {
-				return (bool)_scriptValue.GetValue();
+				return (bool) _scriptValue.GetValue();
 			}
 			return false;
 		}

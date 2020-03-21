@@ -1,7 +1,7 @@
 ﻿/*
  * By Jenocn
  * https://jenocn.github.io/
-*/
+ */
 
 namespace gs.compiler {
 	public enum ScriptValueType {
@@ -15,7 +15,7 @@ namespace gs.compiler {
 		private ScriptValueType _type = ScriptValueType.Null;
 		private object _value = null;
 
-		public readonly static ScriptValue NULL = new ScriptValue();
+		public static ScriptValue NULL { get { return new ScriptValue(); } }
 
 		public static ScriptValue Create(object src) {
 			ScriptValue ret = NULL;
@@ -80,7 +80,7 @@ namespace gs.compiler {
 			case ScriptValueType.Number:
 				return _value.ToString();
 			case ScriptValueType.String:
-				return (string)_value;
+				return (string) _value;
 			case ScriptValueType.Bool:
 				return _value.ToString().ToLower();
 			}
@@ -102,11 +102,11 @@ namespace gs.compiler {
 			case ScriptValueType.Null:
 				return true;
 			case ScriptValueType.Number:
-				return System.Math.Abs((double)a.GetValue() - (double)b.GetValue()) < double.Epsilon;
+				return System.Math.Abs((double) a.GetValue() - (double) b.GetValue()) < double.Epsilon;
 			case ScriptValueType.String:
-				return (string)a.GetValue() == (string)b.GetValue();
+				return (string) a.GetValue() == (string) b.GetValue();
 			case ScriptValueType.Bool:
-				return (bool)a.GetValue() == (bool)b.GetValue();
+				return (bool) a.GetValue() == (bool) b.GetValue();
 			}
 			return false;
 		}
@@ -121,7 +121,7 @@ namespace gs.compiler {
 			var type = a.GetValueType();
 			switch (type) {
 			case ScriptValueType.Number:
-				return (double)a.GetValue() < (double)b.GetValue();
+				return (double) a.GetValue() < (double) b.GetValue();
 			}
 			return false;
 		}
@@ -136,7 +136,7 @@ namespace gs.compiler {
 			var type = a.GetValueType();
 			switch (type) {
 			case ScriptValueType.Number:
-				return (double)a.GetValue() > (double)b.GetValue();
+				return (double) a.GetValue() > (double) b.GetValue();
 			}
 			return false;
 		}
@@ -151,7 +151,7 @@ namespace gs.compiler {
 			var type = a.GetValueType();
 			switch (type) {
 			case ScriptValueType.Number:
-				return (double)a.GetValue() <= (double)b.GetValue();
+				return (double) a.GetValue() <= (double) b.GetValue();
 			}
 			return false;
 		}
@@ -166,7 +166,7 @@ namespace gs.compiler {
 			var type = a.GetValueType();
 			switch (type) {
 			case ScriptValueType.Number:
-				return (double)a.GetValue() >= (double)b.GetValue();
+				return (double) a.GetValue() >= (double) b.GetValue();
 			}
 			return false;
 		}

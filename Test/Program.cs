@@ -1,20 +1,27 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using gs;
 
 
 namespace Test {
 	class Program {
 		static void Main(string[] args) {
-			// var text = File.ReadAllText("../../tmptest.gs");
-			// var func = gs.VM.Load(text);
-			// func.Execute();
+            VM.AddModule(new std.StandardModule());
 
-			var text = File.ReadAllText("../../student.gs");
-			gs.VM.AddUsing("student", text);
-			var mainFunc = gs.VM.Load(File.ReadAllText("../../main.gs"));
-			var mainFunc2 = gs.VM.Load(File.ReadAllText("../../main2.gs"));
-            mainFunc.Execute();
-            mainFunc2.Execute();
+            var text = File.ReadAllText("../../main3.gs");
+            VM.Load(text).Execute();
+
+
+            // var text = File.ReadAllText("../../tmptest.gs");
+            // var func = gs.VM.Load(text);
+            // func.Execute();
+
+			//var text = File.ReadAllText("../../student.gs");
+			//gs.VM.AddUsing("student", text);
+			//var mainFunc = gs.VM.Load(File.ReadAllText("../../main.gs"));
+			//var mainFunc2 = gs.VM.Load(File.ReadAllText("../../main2.gs"));
+   //         mainFunc.Execute();
+   //         mainFunc2.Execute();
 
 			//gs.VM.RegisterFunction("sum", (List<gs.VMValue> tempArgs) => {
 			//	double ret = 0;
