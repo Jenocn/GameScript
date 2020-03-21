@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using gs;
 using gs.compiler.tool;
+using std;
 
 namespace GameScriptApplication {
     public class SourcesConfig {
@@ -18,7 +19,7 @@ namespace GameScriptApplication {
                 var config = GetConfg();
                 if (config == null) {
                     Console.WriteLine("The 'sources.conf' error!");
-                    return;
+                    break;
                 }
 
                 if (args.Length > 0) {
@@ -28,7 +29,7 @@ namespace GameScriptApplication {
                 string mainSrc = "";
                 if (!ReadSrc(config.main, out mainSrc)) {
                     Console.WriteLine("Not found '" + config.main + "'!");
-                    return;
+                    break;
                 }
 
                 foreach (var item in config.list) {
@@ -40,6 +41,7 @@ namespace GameScriptApplication {
                     }
                 }
 
+                LoadModule();
                 LoadScript(mainSrc);
             } while (false);
 
@@ -96,6 +98,10 @@ namespace GameScriptApplication {
             }
             src = File.ReadAllText(filename);
             return true;
+        }
+
+        private static void LoadModule() {
+            VM.AddModule(new StandardModule());
         }
 
         private static void LoadScript(string src) {

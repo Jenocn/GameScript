@@ -13,9 +13,12 @@ namespace std.io {
 					return null;
 				}
 				if (!args[0].IsString()) { return null; }
+				if (!File.Exists(args[0].ToString())) {
+					return null;
+				}
 				return new VMValue(File.ReadAllText(args[0].ToString()));
 			});
-			
+
 			ret &= RegisterFunction("file.writeText", (List<VMValue> args) => {
 				if (args.Count < 2) {
 					return VMValue.FALSE;
@@ -34,6 +37,9 @@ namespace std.io {
 				if (!args[0].IsString() || !args[1].IsString()) {
 					return VMValue.FALSE;
 				}
+				if (!File.Exists(args[0].ToString()) || File.Exists(args[1].ToString())) {
+					return VMValue.FALSE;
+				}
 				File.Copy(args[0].ToString(), args[1].ToString());
 				return VMValue.TRUE;
 			});
@@ -45,6 +51,9 @@ namespace std.io {
 				if (!args[0].IsString() || !args[1].IsString()) {
 					return VMValue.FALSE;
 				}
+				if (!File.Exists(args[0].ToString()) || File.Exists(args[1].ToString())) {
+					return VMValue.FALSE;
+				}
 				File.Move(args[0].ToString(), args[1].ToString());
 				return VMValue.TRUE;
 			});
@@ -54,6 +63,9 @@ namespace std.io {
 					return VMValue.FALSE;
 				}
 				if (!args[0].IsString()) {
+					return VMValue.FALSE;
+				}
+				if (!File.Exists(args[0].ToString())) {
 					return VMValue.FALSE;
 				}
 				File.Delete(args[0].ToString());
