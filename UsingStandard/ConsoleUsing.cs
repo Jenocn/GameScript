@@ -29,6 +29,9 @@ namespace std.console {
 					Console.WriteLine(item);
 				}
 			});
+			ret &= RegisterFunction("console.clear", (List<VMValue> args) => {
+				Console.Clear();
+			});
 
 			return ret;
 		}

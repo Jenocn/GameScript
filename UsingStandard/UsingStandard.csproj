@@ -35,6 +35,8 @@
     <Compile Include="IOUsing.cs" />
     <Compile Include="StandardModule.cs" />
     <Compile Include="ModuleUsing.cs" />
+    <Compile Include="ListUsing.cs" />
+    <Compile Include="StringUsing.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameScript\GameScript.csproj">
