@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.IO;
 using gs;
 
-namespace std.io {
-	public class IOUsing : VMUsing<IOUsing> {
+namespace std.file {
+	public class FileUsing : VMUsing<FileUsing> {
 		public override bool OnExecuteUsing() {
 
 			bool ret = true;

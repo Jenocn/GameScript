@@ -32,11 +32,11 @@
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConsoleUsing.cs" />
-    <Compile Include="IOUsing.cs" />
     <Compile Include="StandardModule.cs" />
     <Compile Include="ModuleUsing.cs" />
     <Compile Include="ListUsing.cs" />
     <Compile Include="StringUsing.cs" />
+    <Compile Include="FileUsing.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GameScript\GameScript.csproj">
