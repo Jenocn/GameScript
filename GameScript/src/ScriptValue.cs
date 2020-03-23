@@ -79,27 +79,30 @@ namespace gs.compiler {
 				if (tempSrc.Length >= 2 && tempSrc[tempSrc.Length - 1] == Grammar.ARRE) {
 					ret = new ScriptValue();
 					ret._type = ScriptValueType.List;
-					var tempSplit = tempSrc.Substring(1, tempSrc.Length - 2).Split(',');
+					var tempListContentStr = tempSrc.Substring(1, tempSrc.Length - 2).Trim();
 					var tempList = new List<ScriptValue>();
-					foreach (var item in tempSplit) {
-						var tempStr = item.Trim();
-						if (string.IsNullOrEmpty(tempStr)) {
-							return false;
-						}
-						ScriptValue tempValue = null;
-						if (space != null) {
-							var findObj = space.FindObject(tempStr);
-							if (findObj != null) {
-								tempValue = findObj.GetValue();
-								tempList.Add(tempValue);
-								continue;
+					if (!string.IsNullOrEmpty(tempListContentStr)) {
+						var tempSplit = tempListContentStr.Split(',');
+						foreach (var item in tempSplit) {
+							var tempStr = item.Trim();
+							if (string.IsNullOrEmpty(tempStr)) {
+								return false;
 							}
-						}
+							ScriptValue tempValue = null;
+							if (space != null) {
+								var findObj = space.FindObject(tempStr);
+								if (findObj != null) {
+									tempValue = findObj.GetValue();
+									tempList.Add(tempValue);
+									continue;
+								}
+							}
 
-						if (!TryParse(tempStr, null, out tempValue)) {
-							return false;
+							if (!TryParse(tempStr, null, out tempValue)) {
+								return false;
+							}
+							tempList.Add(tempValue);
 						}
-						tempList.Add(tempValue);
 					}
 					ret._value = tempList;
 					return true;
