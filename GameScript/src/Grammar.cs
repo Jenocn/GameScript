@@ -46,6 +46,9 @@ namespace gs.compiler {
 		public static readonly string FOR = "for";
 		// while sign
 		public static readonly string WHILE = "while";
+		// foreach sign
+		public static readonly string FOREACH = "foreach";
+		public static readonly string FOREACH_IN = "in";
 
 		// compare
 		public static readonly string COMPARE_EQUIP = "==";
@@ -81,6 +84,6 @@ namespace gs.compiler {
 		public static readonly string NEW = "new";
 
 		// special char of name
-		public static readonly char[] SPECIAL_CHAR = new char[] { ' ', '\n' };
+		public static readonly char[] SPECIAL_CHAR = new char[] { ' ', '\n', '\t' };
 	}
 }

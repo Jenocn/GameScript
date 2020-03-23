@@ -25,6 +25,7 @@ namespace gs.compiler {
 		private Dictionary<string, ScriptObject> _objects = new Dictionary<string, ScriptObject>();
 
 		// always
+		private Dictionary<string, ScriptObject> _registerObjects = new Dictionary<string, ScriptObject>();
 		private Dictionary<string, ScriptObject> _strings = new Dictionary<string, ScriptObject>();
 		private System.Func<List<ScriptValue>, ScriptValue> _func = null;
 		private MethodPool _methodPool = new MethodPool();
@@ -300,6 +301,62 @@ namespace gs.compiler {
 								bMethodBreak = bConditionBreak;
 								bMethodContinue = bConditionContinue;
 								return true;
+							}
+						}
+						continue;
+					}
+
+					// foreach
+					var foreachPos = srcNewHeader.IndexOf(Grammar.FOREACH);
+					if (foreachPos == 0) {
+						var foreachParamStr = srcNewHeader.Substring(Grammar.FOREACH.Length).Trim();
+						if (foreachParamStr.Length < Grammar.FOREACH_IN.Length + 6) {
+							Logger.Error(srcNewHeader);
+							return false;
+						}
+						if (foreachParamStr[0] != Grammar.FPB && foreachParamStr[foreachParamStr.Length - 1] != Grammar.FPE) {
+							Logger.Error(srcNewHeader);
+							return false;
+						}
+						var foreachInPos = tool.GrammarTool.ReadSingleSignPos(foreachParamStr, Grammar.FOREACH_IN);
+						if (foreachInPos == -1) {
+							Logger.Error(srcNewHeader);
+							return false;
+						}
+						var tempParamName = foreachParamStr.Substring(1, foreachInPos - 1).Trim();
+						var tempListName = foreachParamStr.Substring(foreachInPos + Grammar.FOREACH_IN.Length, foreachParamStr.Length - foreachInPos - Grammar.FOREACH_IN.Length - 1).Trim();
+						var obj = FindObject(tempListName);
+						if (obj == null) {
+							Logger.Error(srcNewHeader);
+							return false;
+						}
+						var objValue = obj.GetValue();
+						if (objValue.GetValueType() != ScriptValueType.List) {
+							Logger.Error(srcNewHeader);
+							return false;
+						}
+
+						var tempList = (List<ScriptValue>) objValue.GetValue();
+						foreach (var item in tempList) {
+							var conditionExe = new ScriptMethod(srcNewBody, this, ScriptMethodType.Loop);
+							conditionExe.RegisterObject(tempParamName, item);
+							var conditionResult = ScriptValue.NULL;
+							bool bConditionReturn = false;
+							bool bConditionBreak = false;
+							bool bConditionContinue = false;
+							if (!conditionExe.Execute(null, out bConditionReturn, out conditionResult, out bConditionBreak, out bConditionContinue)) {
+								Logger.Error(srcNewHeader);
+								return false;
+							}
+							if (bConditionReturn) {
+								methodReturnResult = conditionResult;
+								return true;
+							}
+							if (bConditionBreak) {
+								break;
+							}
+							if (bConditionContinue) {
+								continue;
 							}
 						}
 						continue;
@@ -681,9 +738,23 @@ namespace gs.compiler {
 			return null;
 		}
 
+		public bool RegisterObject(string name, ScriptValue value) {
+			if (string.IsNullOrEmpty(name)) {
+				return false;
+			}
+			if (FindObject(name) != null) {
+				return false;
+			}
+			_registerObjects.Add(name, new ScriptObject(name, value));
+			return true;
+		}
+
 		public ScriptObject FindObject(string name) {
 			name = _ConvertObjectName(name);
 			ScriptObject ret = null;
+			if (_registerObjects.TryGetValue(name, out ret)) {
+				return ret;
+			}
 			if (_objects.TryGetValue(name, out ret)) {
 				return ret;
 			}

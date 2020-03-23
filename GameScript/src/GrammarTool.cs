@@ -22,7 +22,7 @@ namespace gs.compiler.tool {
 				// find param
 				var fpsPos = src.IndexOf(Grammar.FPS, startPos);
 				if (fpsPos != -1) {
-                    index = fpsPos;
+					index = fpsPos;
 				}
 
 				// find method
@@ -64,6 +64,26 @@ namespace gs.compiler.tool {
 				if (count == -1) {
 					return i;
 				}
+			}
+			return -1;
+		}
+
+		public static int ReadSingleSignPos(string src, string sign, bool ignoreSS = true) {
+			var spaceChar = new HashSet<char> { ' ', '\t', '\n' };
+			int pos = 0;
+			while (pos != -1) {
+				var findPos = src.IndexOf(sign, pos, System.StringComparison.Ordinal);
+				if (findPos == -1) {
+					return -1;
+				}
+				pos = findPos + sign.Length;
+				if (findPos > 0 && !spaceChar.Contains(src[findPos - 1])) {
+					continue;
+				}
+				if (findPos + sign.Length < src.Length && !spaceChar.Contains(src[findPos + sign.Length])) {
+					continue;
+				}
+				return findPos;
 			}
 			return -1;
 		}
