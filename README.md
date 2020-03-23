@@ -14,7 +14,6 @@ main();
 - 函数式结构 
 - 基于.net开发,跨平台,支持Unity 
 - 嵌入式,接入方便,简单易用
-- 类C语法 
 
 ## 使用场合 
 &emsp;&emsp;脚本不需要编译,被当做资源使用,所以优点是支持生产环境下修改,当某些内容需要频繁修改的时候,适合使用脚本,但是脚本的运行效率比较低,不适合高性能场合使用.  
@@ -30,6 +29,7 @@ GameScript是动态类型,但本质上会根据值来动态确定类型
 - `number`
 - `string`
 - `bool`
+- `list`
 
 ## 脚本代码 
 ```csharp
@@ -39,22 +39,26 @@ var value2 = 10;
 var value3 = "HelloWorld";
 var value4 = true;
 var value5 = false;
+var value6 = [1, true, "value"];
 
 // 赋值
 value1 = 1234;
 value1 = "string";
 
 // 表达式 
-var num1 = 100 * (5 + 3);
+var num1 = 100 * (5 + 3); // 基本运算
 var num2 = num1 / 100;
+var num3 = num1 % 2; // 余数
+var num4 = num1 ^ 2; // 次方
 
 // 字符串拼接
 var str1 = "abc" + "123";
 var str2 = str1 + " yes" + " no " + str1;
+var str3 = "abc" + 123 + true;
 
+// 内置方法
 // 内置输出方法
 print(str2);
-
 // 求字符串长度的方法
 var length = strlen(str2);
 print(length);
@@ -74,6 +78,26 @@ while(x > 0) {
     print(x);
     x = x - 1;
 }
+// 循环控制
+while (x < 10) {
+    if (x == 3) {
+        continue;
+    }
+    if (x == 5) {
+        break;
+    }
+    x = x + 1;
+}
+
+// foreach语句
+var li = [1, 2, 3, 4];
+foreach(item in li) {
+    print(item);
+}
+// 带下标的foreach
+foreach(item,i in li) {
+    print(i + ":" + item);
+}
 
 // 键值对变量
 var pair[0] = "pair 0";
@@ -84,6 +108,14 @@ while (keyIndex < 3) {
     print(pair[keyIndex]);
     keyIndex = keyIndex + 1;
 }
+
+// 键值对变量形式数组定义
+// 定义arr1[0] ~ arr1[9] 10个对象
+array arr1[10];
+arr1[0] = 0;
+// 定义arr2[3] ~ arr2[5] 3个对象
+array arr2[3, 5];
+arr2[3] = 0;
 
 // 定义一个无参的函数
 Method0() {
@@ -124,7 +156,24 @@ SpaceMethod1() {
         }
     }
 }
+
 ```
+
+## 模块
+```csharp
+using space;
+// 模块新建
+new space;
+
+// 标准库模块
+// 引用控制台模块
+using std.console;
+// 调用控制台模块方法
+console.log("message");
+```
+
+更多标准库模块请参考
+[https://github.com/Jenocn/GameScript/tree/master/UsingStandard](https://github.com/Jenocn/GameScript/tree/master/UsingStandard)
 
 ## C#中 
 
@@ -172,8 +221,21 @@ VMFunction gsFunc = gs.VM.Load(src);
 gsFunc.Execute();
 ```
 
+### 添加模块/引用  
+
+```csharp
+// 添加模块
+public static void AddModule(VMModuleBase module);
+// 添加引用
+public static void AddUsing<T>(string name, VMUsing<T> value) where T : VMUsing<T>, new();
+```
+
+
 #### VMValue
 `VMValue`是一个兼容的值类型,提供了一系列方法便于对脚本值和C#值之间的操作,通过`new VMValue(object)`可以创建对象.
 
 #### VMFunction
 `VMFunction`表示一个脚本函数,提供在C#中对脚本中的函数调用,提供`GetFunction(name)`方法可以获取当前函数空间下的子函数
+
+#### VMUsing
+`VMUsing`是一个兼容的Using类型,方便在C#中注册新的功能模块
