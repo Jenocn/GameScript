@@ -323,7 +323,7 @@ namespace gs.compiler {
 							Logger.Error(srcNewHeader);
 							return false;
 						}
-						var tempParamName = foreachParamStr.Substring(1, foreachInPos - 1).Trim();
+						var tempParamNameStr = foreachParamStr.Substring(1, foreachInPos - 1).Trim();
 						var tempListName = foreachParamStr.Substring(foreachInPos + Grammar.FOREACH_IN.Length, foreachParamStr.Length - foreachInPos - Grammar.FOREACH_IN.Length - 1).Trim();
 						var obj = FindObject(tempListName);
 						if (obj == null) {
@@ -336,10 +336,22 @@ namespace gs.compiler {
 							return false;
 						}
 
+						var tempParamName = tempParamNameStr;
+						var tempParamIndexName = "";
+						var tempParamNameStrSplit = tempParamNameStr.Split(Grammar.FPS);
+						if (tempParamNameStrSplit.Length > 1) {
+							tempParamName = tempParamNameStrSplit[0].Trim();
+							tempParamIndexName = tempParamNameStrSplit[1].Trim();
+						}
 						var tempList = (List<ScriptValue>) objValue.GetValue();
+						int index = 0;
 						foreach (var item in tempList) {
 							var conditionExe = new ScriptMethod(srcNewBody, this, ScriptMethodType.Loop);
 							conditionExe.RegisterObject(tempParamName, item);
+							if (!string.IsNullOrEmpty(tempParamIndexName)) {
+								conditionExe.RegisterObject(tempParamIndexName, ScriptValue.Create(index));
+							}
+							++index;
 							var conditionResult = ScriptValue.NULL;
 							bool bConditionReturn = false;
 							bool bConditionBreak = false;
