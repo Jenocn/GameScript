@@ -84,6 +84,31 @@ namespace std.io {
 				return new VMValue(File.Exists(args[0].ToString()));
 			});
 
+			ret &= RegisterFunction("file.list", (List<VMValue> args) => {
+				if (args.Count < 1) {
+					gs.compiler.Logger.Error("file.list");
+					return VMValue.NULL;
+				}
+				string path = "./";
+				string searchPattern = "*";
+				bool bDeep = false;
+				if (args.Count >= 1 && args[0].IsString()) {
+					path = args[0].ToString();
+				}
+				if (args.Count >= 2 && args[1].IsString()) {
+					searchPattern = args[1].ToString();
+				}
+				if (args.Count >= 3 && args[2].IsBool()) {
+					bDeep = args[2].GetBool();
+				}
+				var tempList = Directory.GetFiles(args[0].ToString(), searchPattern, bDeep ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly);
+				var retList = new List<VMValue>();
+				foreach (var item in tempList) {
+					retList.Add(new VMValue(item));
+				}
+				return new VMValue(retList);
+			});
+
 			return ret;
 		}
 	}

@@ -28,6 +28,15 @@ namespace gs.compiler {
 			TryParse(src.ToString(), null, out ret);
 			return ret;
 		}
+		public static ScriptValue CreateList(List<ScriptValue> arg = null) {
+			if (arg == null) {
+				arg = new List<ScriptValue>();
+			}
+			var ret = new ScriptValue();
+			ret._type = ScriptValueType.List;
+			ret._value = arg;
+			return ret;
+		}
 
 		public static bool TryParse(string src, ScriptMethod space, out ScriptValue ret) {
 			ret = NULL;

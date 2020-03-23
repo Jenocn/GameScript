@@ -12,7 +12,6 @@ namespace gs {
 		public static VMValue FALSE { get { return new VMValue(false); } }
 		public static VMValue NULL { get { return new VMValue(); } }
 
-
 		private ScriptValue _scriptValue = null;
 
 		public VMValue() {
@@ -26,11 +25,28 @@ namespace gs {
 			_scriptValue = value;
 		}
 
+		public VMValue(System.Collections.Generic.List<VMValue> arg) {
+			_scriptValue = ScriptValue.NULL;
+			SetValue(arg);
+		}
+
 		public void SetValue(object value) {
 			if (value is string) {
 				value = "\"" + value + "\"";
 			}
+
 			_scriptValue = ScriptValue.Create(value);
+		}
+
+		public void SetValue(System.Collections.Generic.List<VMValue> args) {
+			if (args == null) {
+				args = new System.Collections.Generic.List<VMValue>();
+			}
+			var tempList = new System.Collections.Generic.List<ScriptValue>();
+			foreach (var item in args) {
+				tempList.Add(item.GetMetadata());
+			}
+			_scriptValue = ScriptValue.CreateList(tempList);
 		}
 
 		public override string ToString() {
@@ -49,12 +65,15 @@ namespace gs {
 		public bool IsNull() {
 			return _scriptValue.GetValueType() == ScriptValueType.Null;
 		}
+		public bool IsList() {
+			return _scriptValue.GetValueType() == ScriptValueType.List;
+		}
 
 		public object GetValue() {
 			return _scriptValue.GetValue();
 		}
 		public double GetNumber() {
-			if (_scriptValue.GetValueType() == ScriptValueType.Number) {
+			if (IsNumber()) {
 				return (double) _scriptValue.GetValue();
 			}
 			return 0;
@@ -66,16 +85,23 @@ namespace gs {
 			return (float) GetNumber();
 		}
 		public string GetString() {
-			if (_scriptValue.GetValueType() == ScriptValueType.String) {
+			if (IsString()) {
 				return (string) _scriptValue.GetValue();
 			}
 			return "";
 		}
 		public bool GetBool() {
-			if (_scriptValue.GetValueType() == ScriptValueType.Bool) {
+			if (IsBool()) {
 				return (bool) _scriptValue.GetValue();
 			}
 			return false;
+		}
+
+		public System.Collections.Generic.List<ScriptValue> GetList() {
+			if (IsList()) {
+				return (System.Collections.Generic.List<ScriptValue>) _scriptValue.GetValue();
+			}
+			return new System.Collections.Generic.List<ScriptValue>();
 		}
 
 		public ScriptValue GetMetadata() {
