@@ -6,6 +6,6 @@
 namespace gs.config {
 	public static class Config {
 		// version code 
-		public static readonly string Version = "1.3.1 beta";
+		public static readonly string Version = "1.4.0 beta";
 	}
 }
