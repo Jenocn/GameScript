@@ -14,7 +14,7 @@ namespace gs.compiler {
 			var tempSrc = src.Trim();
 
 			// value
-			if (ScriptValue.TryParse(tempSrc, out result)) {
+			if (ScriptValue.TryParse(tempSrc, space, out result)) {
 				return true;
 			}
 

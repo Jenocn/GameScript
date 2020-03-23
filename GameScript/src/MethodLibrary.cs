@@ -13,6 +13,7 @@ namespace gs.compiler {
 		static MethodLibrary() {
 			_methodPool.AddMethod("print", _std_print);
 			_methodPool.AddMethod("strlen", _std_strlen);
+			_methodPool.AddMethod("len", _std_len);
 		}
 
 		private static ScriptValue _std_print(List<ScriptValue> args) {
@@ -23,10 +24,24 @@ namespace gs.compiler {
 		}
 
 		private static ScriptValue _std_strlen(List<ScriptValue> args) {
-			if (args.Count > 0) {
-				return ScriptValue.Create(args[0].ToString().Length);
+			if (args.Count == 0) {
+				return null;
 			}
-			return null;
+			if (args[0].GetValueType() != ScriptValueType.String) {
+				return null;
+			}
+			return ScriptValue.Create(args[0].ToString().Length);
+		}
+
+		private static ScriptValue _std_len(List<ScriptValue> args) {
+			if (args.Count == 0) {
+				return null;
+			}
+			if (args[0].GetValueType() != ScriptValueType.List) {
+				return null;
+			}
+			var tempList = (List<ScriptValue>) args[0].GetValue();
+			return ScriptValue.Create(tempList.Count);
 		}
 
 		public static bool RegisterMethod(string name, System.Func<List<ScriptValue>, ScriptValue> func) {

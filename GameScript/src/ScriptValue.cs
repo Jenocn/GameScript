@@ -3,12 +3,15 @@
  * https://jenocn.github.io/
  */
 
+using System.Collections.Generic;
+
 namespace gs.compiler {
 	public enum ScriptValueType {
 		Null = 0,
 		Number,
 		String,
 		Bool,
+		List,
 	}
 
 	public sealed class ScriptValue {
@@ -22,11 +25,11 @@ namespace gs.compiler {
 			if (src == null) {
 				return ret;
 			}
-			TryParse(src.ToString(), out ret);
+			TryParse(src.ToString(), null, out ret);
 			return ret;
 		}
 
-		public static bool TryParse(string src, out ScriptValue ret) {
+		public static bool TryParse(string src, ScriptMethod space, out ScriptValue ret) {
 			ret = NULL;
 			var tempSrc = src.Trim();
 			if (string.IsNullOrEmpty(tempSrc)) {
@@ -63,6 +66,36 @@ namespace gs.compiler {
 					return true;
 				}
 			}
+			if (checkCh == Grammar.ARRB) {
+				if (tempSrc.Length >= 2 && tempSrc[tempSrc.Length - 1] == Grammar.ARRE) {
+					ret = new ScriptValue();
+					ret._type = ScriptValueType.List;
+					var tempSplit = tempSrc.Substring(1, tempSrc.Length - 2).Split(',');
+					var tempList = new List<ScriptValue>();
+					foreach (var item in tempSplit) {
+						var tempStr = item.Trim();
+						if (string.IsNullOrEmpty(tempStr)) {
+							return false;
+						}
+						ScriptValue tempValue = null;
+						if (space != null) {
+							var findObj = space.FindObject(tempStr);
+							if (findObj != null) {
+								tempValue = findObj.GetValue();
+								tempList.Add(tempValue);
+								continue;
+							}
+						}
+
+						if (!TryParse(tempStr, null, out tempValue)) {
+							return false;
+						}
+						tempList.Add(tempValue);
+					}
+					ret._value = tempList;
+					return true;
+				}
+			}
 			double tempDouble = 0;
 			if (double.TryParse(tempSrc, out tempDouble)) {
 				ret = new ScriptValue();
@@ -83,6 +116,21 @@ namespace gs.compiler {
 				return (string) _value;
 			case ScriptValueType.Bool:
 				return _value.ToString().ToLower();
+			case ScriptValueType.List:
+				var ret = "[";
+				var tempList = (List<ScriptValue>) _value;
+				for (int i = 0; i < tempList.Count; ++i) {
+					var tempValue = tempList[i];
+					if (tempValue._type == ScriptValueType.String) {
+						ret += "\"" + tempValue.ToString() + "\"";
+					} else {
+						ret += tempValue.ToString();
+					}
+					if (i != tempList.Count - 1) {
+						ret += ", ";
+					}
+				}
+				return ret + ']';
 			}
 			return "null";
 		}
