@@ -8,23 +8,25 @@ public class LineExecuter {
 		return _src;
 	}
 
-	public string Execute(string line) {
+	public string ExecuteLineOrSaveLine(string line) {
 		ScriptValue result = ScriptValue.NULL;
 		if (ScriptExpression.Execute(line, method, out result)) {
 			return result.ToString();
 		}
 
-		string tempSrc = _src;
 		if (!string.IsNullOrEmpty(line)) {
-			tempSrc += (line + '\n');
-		}
-		var child = new ScriptMethod(tempSrc, method);
-		bool bReturn = false;
-		if (child.Execute(null, out bReturn, out result)) {
-			_src = tempSrc;
+			_src += (line + '\n');
 		}
 		return "";
 	}
+
+	public bool ExecuteSrc() {
+		var child = new ScriptMethod(_src, method);
+		bool bReturn = false;
+		ScriptValue result = ScriptValue.NULL;
+		return child.Execute(null, out bReturn, out result);
+	}
+
 	public void Clear() {
 		_src = "";
 		method = new ScriptMethod("");

@@ -8,6 +8,7 @@ public static class CommandManager {
 		Quit, // 退出
 		ShowSrc, // 显示当前源码
 		Space, // 显示当前所有空间
+		Execute, // 执行
 		Reset, // 重置环境
 		OpenFile, // 打开文件
 		Change, // 改变当前脚本空间
@@ -33,6 +34,8 @@ public static class CommandManager {
 		CMDS_NO_PARAMS.Add("src", Command.ShowSrc);
 		CMDS_NO_PARAMS.Add("reset", Command.Reset);
 		CMDS_NO_PARAMS.Add("space", Command.Space);
+		CMDS_NO_PARAMS.Add("execute", Command.Execute);
+		CMDS_NO_PARAMS.Add("exec", Command.Execute);
 
 		CMDS_PARAMS.Add("open", Command.OpenFile);
 		CMDS_PARAMS.Add("change", Command.Change);
@@ -42,7 +45,7 @@ public static class CommandManager {
 	public static void Run(params string[] args) {
 
 		gs.VM.AddModule(new std.StandardModule());
-		
+
 		CommandManager.WriteTitleLine();
 		if (args.Length > 0) {
 			CommandManager.ExecuteFile(args[0]);
@@ -81,7 +84,7 @@ public static class CommandManager {
 			ExecuteCommand(item.Value, args);
 			return;
 		}
-		ExecuteSrc(line);
+		ExecuteLine(line);
 	}
 
 	public static bool ExecuteCommand(Command command, params string[] args) {
@@ -109,6 +112,9 @@ public static class CommandManager {
 				GSConsole.WriteLine(item.Key + (bSelected ? " (cur)" : ""));
 			}
 			break;
+		case Command.Execute:
+			ExecuteSrc();
+			break;
 		case Command.Reset:
 			GSConsole.Clear();
 			_RemoveAllExecuter();
@@ -135,11 +141,15 @@ public static class CommandManager {
 		return true;
 	}
 
-	public static void ExecuteSrc(string src) {
-		var result = _GetCurExecuter().Execute(src);
+	public static void ExecuteLine(string src) {
+		var result = _GetCurExecuter().ExecuteLineOrSaveLine(src);
 		if (!string.IsNullOrEmpty(result)) {
 			GSConsole.WriteLine(result.ToString());
 		}
+	}
+
+	public static void ExecuteSrc() {
+		_GetCurExecuter().ExecuteSrc();
 	}
 
 	public static void ExecuteFile(string path) {
