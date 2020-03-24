@@ -15,7 +15,7 @@ public static class CommandManager {
 		Remove, // 删除空间
 	}
 
-	public static readonly string ConsoleVersion = "1.1.1 beta";
+	public static readonly string ConsoleVersion = "1.1.2 beta";
 	public static readonly string GSDesc = "GameScript " + gs.config.Config.Version;
 	public static readonly string ConsoleDesc = "Console " + ConsoleVersion;
 
