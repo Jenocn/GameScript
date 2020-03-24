@@ -208,8 +208,17 @@ public static class CommandManager {
 			name = path.Substring(chPos + 1).Trim();
 		}
 
+		string[] copyFiles = new string[] {
+			"sources.conf",
+			"GameScript.dll",
+			"UsingStandard.dll",
+		};
+
 		File.Copy("GameScriptApplication.exe", path + "/" + name + ".exe");
-		File.Copy("sources.conf", path + "/sources.conf");
+		foreach (var item in copyFiles) {
+			File.Copy(item, path + "/" + item);
+		}
+
 		string templateSrc = "main() {\n\tWelcome() {\n\t\tprint(\"Welcome to GameScript!\");\n\t}\n\tWelcome();\n}\nmain();";
 		File.WriteAllText(path + "/main.gs", templateSrc);
 
