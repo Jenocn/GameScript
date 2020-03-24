@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.IO;
 
 public static class CommandManager {
 
@@ -13,9 +14,10 @@ public static class CommandManager {
 		OpenFile, // 打开文件
 		Change, // 改变当前脚本空间
 		Remove, // 删除空间
+		New, // 新建项目
 	}
 
-	public static readonly string ConsoleVersion = "1.1.2 beta";
+	public static readonly string ConsoleVersion = "1.2.0 beta";
 	public static readonly string GSDesc = "GameScript " + gs.config.Config.Version;
 	public static readonly string ConsoleDesc = "Console " + ConsoleVersion;
 
@@ -40,6 +42,7 @@ public static class CommandManager {
 		CMDS_PARAMS.Add("open", Command.OpenFile);
 		CMDS_PARAMS.Add("change", Command.Change);
 		CMDS_PARAMS.Add("remove", Command.Remove);
+		CMDS_PARAMS.Add("new", Command.New);
 	}
 
 	public static void Run(params string[] args) {
@@ -135,6 +138,9 @@ public static class CommandManager {
 		case Command.Remove:
 			ExecuteRemoveSpace(args);
 			break;
+		case Command.New:
+			ExecuteNewProject(args);
+			break;
 		default:
 			return false;
 		}
@@ -181,6 +187,33 @@ public static class CommandManager {
 				ExecuteChange("");
 			}
 		}
+	}
+
+	public static void ExecuteNewProject(params string[] args) {
+		string path = "";
+		if (args.Length > 0) {
+			path = args[0].Trim();
+		}
+
+		if (!Directory.Exists(path)) {
+			Directory.CreateDirectory(path);
+		} else {
+			GSConsole.WriteLine("[NO] Project: " + path + " is exists!");
+			return;
+		}
+
+		string name = path;
+		var chPos = path.LastIndexOfAny(new char[] { '/', '\\' });
+		if (chPos != -1) {
+			name = path.Substring(chPos + 1).Trim();
+		}
+
+		File.Copy("GameScriptApplication.exe", path + "/" + name + ".exe");
+		File.Copy("sources.conf", path + "/sources.conf");
+		string templateSrc = "main() {\n\tWelcome() {\n\t\tprint(\"Welcome to GameScript!\");\n\t}\n\tWelcome();\n}\nmain();";
+		File.WriteAllText(path + "/main.gs", templateSrc);
+
+		GSConsole.WriteLine("[YES] Project: " + path + " is created!");
 	}
 
 	public static bool IsStop() {
