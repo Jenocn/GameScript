@@ -6,6 +6,8 @@
 namespace gs.config {
 	public static class Config {
 		// version code 
-		public static readonly string Version = "1.4.0 beta";
+		public const string Version = "1.4.1 beta";
+		// version name
+		public const string Name = "GameScript";
 	}
 }
