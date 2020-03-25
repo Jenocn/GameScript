@@ -47,7 +47,7 @@ public static class CommandManager {
 
 	public static void Run(params string[] args) {
 
-		gs.VM.AddModule(new std.StandardModule());
+		gs.VM.AddModule(new gs.std.StandardModule());
 
 		CommandManager.WriteTitleLine();
 		if (args.Length > 0) {

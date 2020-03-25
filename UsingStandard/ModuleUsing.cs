@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using gs;
 
-namespace std.module {
+namespace gs.std.module {
 	public class ModuleUsing : VMUsing<ModuleUsing> {
 		public override bool OnExecuteUsing() {
 			bool ret = true;

@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using gs;
 using gs.compiler;
 
-namespace std.str {
+namespace gs.std.str {
 	public class StringUsing : VMUsing<StringUsing> {
 		public override bool OnExecuteUsing() {
 			bool ret = true;

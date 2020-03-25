@@ -1,8 +1,7 @@
 using System.Collections.Generic;
-using gs;
 using gs.compiler;
 
-namespace std.list {
+namespace gs.std.list {
 
 	public class ListUsing : VMUsing<ListUsing> {
 		public override bool OnExecuteUsing() {

@@ -6,7 +6,7 @@ using gs;
 namespace Test {
 	class Program {
 		static void Main(string[] args) {
-            VM.AddModule(new std.StandardModule());
+            VM.AddModule(new gs.std.StandardModule());
 
             var text = File.ReadAllText("../../main3.gs");
             VM.Load(text).Execute();

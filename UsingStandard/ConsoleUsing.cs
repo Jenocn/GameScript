@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
-using gs;
 
-namespace std.console {
+namespace gs.std.console {
 	public class ConsoleUsing : VMUsing<ConsoleUsing> {
 		public override bool OnExecuteUsing() {
 			bool ret = true;

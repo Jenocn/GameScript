@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using gs;
 using gs.compiler.tool;
-using std;
 
 namespace GameScriptApplication {
     public class SourcesConfig {
@@ -101,7 +100,7 @@ namespace GameScriptApplication {
         }
 
         private static void LoadModule() {
-            VM.AddModule(new StandardModule());
+            VM.AddModule(new gs.std.StandardModule());
         }
 
         private static void LoadScript(string src) {
