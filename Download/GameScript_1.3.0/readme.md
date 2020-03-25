@@ -21,3 +21,5 @@
 (+) 增加remove命令,用于删除指定空间  
 
 (+) 增加reset命令,删除所有空间并清理控制台  
+
+[github:https://github.com/Jenocn/GameScript](https://github.com/Jenocn/GameScript)  

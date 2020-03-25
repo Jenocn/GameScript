@@ -12,3 +12,5 @@
 
 #### GameScriptApplication  
 (+) 增加`GameScriptApplication`工程,作为模板,用于创建应用  
+
+[github:https://github.com/Jenocn/GameScript](https://github.com/Jenocn/GameScript)  

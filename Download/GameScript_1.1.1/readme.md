@@ -17,3 +17,5 @@
 
 ### 拖入文件执行脚本  
 将GameScript脚本文件直接拖到控制台exe上可以直接运行  
+
+[github:https://github.com/Jenocn/GameScript](https://github.com/Jenocn/GameScript)  
