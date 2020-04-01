@@ -37,6 +37,21 @@ namespace gs {
 			return null;
 		}
 
+		public VMValue Execute(params VMValue[] args) {
+			var scriptArgs = new List<ScriptValue>();
+			if (args != null) {
+				foreach (var arg in args) {
+					scriptArgs.Add(arg.GetMetadata());
+				}
+			}
+			bool bReturn = false;
+			ScriptValue retValue = null;
+			if (_scriptMethod.Execute(scriptArgs, out bReturn, out retValue)) {
+				return new VMValue(retValue);
+			}
+			return null;
+		}
+
 		public bool RegisterFunction(string name, Func<List<VMValue>, VMValue> func) {
 			Func<List<ScriptValue>, ScriptValue> libFunc = (List<ScriptValue> args) => {
 				var retArgs = new List<VMValue>();
