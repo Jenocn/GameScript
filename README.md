@@ -1,4 +1,9 @@
+
 # GameScript
+
+**此版本停止开发,最新版本跳转: [PeakScript](https://github.com/Jenocn/PeakScript)**
+
+---
 
 ```csharp
 main() {
